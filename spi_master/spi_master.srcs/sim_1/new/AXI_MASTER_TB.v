@@ -94,12 +94,40 @@ module AXI_MASTER_TB(
         end
     endtask
     
+    //Read transaction
+    task axi_read;
+        input [3:0] address;
+        output reg [31:0] data;
+        begin
+            @(posedge S_AXI_ACLK);
+            #1;
+            S_AXI_ARADDR <= address;
+            S_AXI_ARVALID <= 1;
+            S_AXI_RREADY <= 1;
+            wait(S_AXI_ARREADY);
+            @(posedge S_AXI_ACLK);
+            S_AXI_ARVALID <= 0;
+            wait(S_AXI_RVALID);
+            @(posedge S_AXI_ACLK);
+            data <= S_AXI_RDATA;
+            #1;
+            S_AXI_RREADY <= 0;
+        end
+    endtask
+    
+    //Read transaction
+    
+    reg [31:0] read_data;
+    
+    //Test cases
     always
     begin
         #200;
         axi_write(0,2);
         #20
         axi_write(4,4);
+        #20
+        axi_read(0,read_data);
         #5000;
     end
     
