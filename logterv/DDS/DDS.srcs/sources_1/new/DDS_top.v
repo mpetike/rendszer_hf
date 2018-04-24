@@ -9,7 +9,8 @@ module DDS_top( //Reset,clock
                 
                 //DEBUG
                 output [23:0] nco_out,
-                output [23:0] sin_out
+                output [23:0] sin_out,
+                output [23:0] tri_out
     );
 
     //NCO    
@@ -67,13 +68,29 @@ module DDS_top( //Reset,clock
             end
             
     end    
-    //LUT példányosítása
+        //LUT példányosítása
     SIN_LUT singen( .clk(clk),
                     .address(LUT_address),
                     .sin_out(sin_lut_out));
-    //COMP
+    //COMP (SQR Wave)
+    
+    //TRI Wave
+    reg signed [23:0] triangle_out = 0;
+    wire [23:0] nco_tri_in = nco_cnt;
+    
+    always @ (posedge clk)
+    begin
+        case(nco_tri_in[23:22])
+            2'b00 : triangle_out[23:1] <= nco_tri_in;
+            2'b01 : triangle_out[23:1] <= 24'h800000 - nco_tri_in;
+            2'b10 : triangle_out[23:1] <= 24'h800000 - nco_tri_in;
+            2'b11 : triangle_out[23:1] <= nco_tri_in;
+        endcase
+
+    end
     
     //Debug connections
     assign nco_out = nco_cnt;    
     assign sin_out = sin_signal;
+    assign tri_out = triangle_out;
 endmodule

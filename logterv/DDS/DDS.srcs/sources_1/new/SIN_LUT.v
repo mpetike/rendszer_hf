@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-
+//1024 elemû LUT egy szinusz elsõ negyedét tartalmazza
 
 module SIN_LUT( input clk,
                 input [9:0] address,

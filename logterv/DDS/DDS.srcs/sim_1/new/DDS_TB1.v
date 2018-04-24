@@ -20,13 +20,15 @@ module DDS_TB1(
     wire [23:0] cntrl_word;
     assign cntrl_word = 419430;
     wire [23:0] sinusoid;
+    wire [23:0] triangle;
     
     //UUT
     DDS_top UUT(    .clk(clk),
                     .rst(rst),
                     .cntrl_word(cntrl_word),
                     .nco_out(NCO_OUT),
-                    .sin_out(sinusoid)
+                    .sin_out(sinusoid),
+                    .tri_out(triangle)
                     );
     
 endmodule
