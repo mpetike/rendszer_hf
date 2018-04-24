@@ -16,16 +16,17 @@ module DDS_TB1(
     reg rst = 0;
     
     //DEBUG connections
-    wire [31:0] NCO_OUT;
-    wire [31:0] cntrl_word;
-    assign cntrl_word = 85899345;
-    
+    wire [23:0] NCO_OUT;
+    wire [23:0] cntrl_word;
+    assign cntrl_word = 419430;
+    wire [23:0] sinusoid;
     
     //UUT
     DDS_top UUT(    .clk(clk),
                     .rst(rst),
                     .cntrl_word(cntrl_word),
-                    .nco_out(NCO_OUT)
+                    .nco_out(NCO_OUT),
+                    .sin_out(sinusoid)
                     );
     
 endmodule
