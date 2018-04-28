@@ -291,7 +291,7 @@ module AXI_LITE_CNTRL(
        
     //Data register IN trigger
     wire SPI_busy;    
-    wire TX_START = ~SPI_busy & NEW_TX & CS;
+    wire TX_START = ~SPI_busy & NEW_TX & (~CS);
     
     //IT generation & TX_COMPLETE flag 
     reg TX_DONE_REG;
@@ -302,7 +302,7 @@ module AXI_LITE_CNTRL(
     
     always @ (posedge S_AXI_ACLK)
     begin
-        if(S_AXI_ARESETN)
+        if(~S_AXI_ARESETN)
             begin
                 TX_DONE_REG <= 0;
                 TX_DONE_IT <= 0;
@@ -313,7 +313,7 @@ module AXI_LITE_CNTRL(
                     begin
                         TX_DONE_REG <= 1;
                         if(input_reg2[1])
-                            TX_DONE_IT <= 0;
+                            TX_DONE_IT <= 1;
                     end
                 else if(((TX_DONE_CLEAR) && (input_reg2[0])) || (TX_START))
                     begin
@@ -326,7 +326,7 @@ module AXI_LITE_CNTRL(
     end
     
     //REG4 CS BUSY
-    assign CS = input_reg3[1];
+    assign CS = ~input_reg3[1];
     assign output_reg3[1] = input_reg3[1];
     assign output_reg3[0] = SPI_busy;
     

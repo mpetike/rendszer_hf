@@ -73,6 +73,7 @@ module AXI_MASTER_TB(
     wire MISO;
     wire SCK;
     wire TX_DONE_IT;
+    wire CS;
     
     //AXI Lite transaction tasks
     //Write transaction
@@ -121,15 +122,17 @@ module AXI_MASTER_TB(
     endtask
     
     //Read buffer    
-    reg [31:0] read_data;
+    reg [31:0] read_data = 0;
     
     //Test cases
     always
     begin
-        #200;
+        #50;
         axi_write(4,0);
         #20
         axi_write(12,32'b10);
+        #20
+        axi_write(8,8'b10);
         #20
         axi_write(0,8'h5f);
         #200
@@ -163,7 +166,8 @@ module AXI_MASTER_TB(
                         .MOSI(MOSI),
                         .MISO(MISO),
                         .SCK(SCK),
-                        .TX_DONE_IT(TX_DONE_IT)
+                        .TX_DONE_IT(TX_DONE_IT),
+                        .CS(CS)
                         );
     
 endmodule
