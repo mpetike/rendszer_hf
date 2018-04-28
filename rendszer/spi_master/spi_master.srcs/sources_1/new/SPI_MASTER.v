@@ -13,90 +13,106 @@ module SPI_MASTER(  //Clock and reset
                     output reg tx_complete,
                     input start_tx,
                     //IO
-                    output sck,
+                    output reg sck,
                     output MOSI,
                     input MISO
     );
     
-    //Controll line
-    reg spi_enable;    
     
-    //SPI COUNTER
-    reg [12:0] spi_cntr = 0;    
-    always @ (posedge clk)
+    
+    //Clock divider
+    reg [7:0] cntr = 0;
+    reg cntr_enable = 0;
+    
+    always @(posedge clk)
     begin
-        if((~spi_enable) || (~rstn))
-            spi_cntr <= 0;
+        #1; //Debug delay
+        if((~rstn)||(~cntr_enable))
+            cntr <= 0;
         else
-            spi_cntr <= spi_cntr + 1;
+            cntr <= cntr + 1;           
     end
     
-    //CLK div ratio 2/4/.../512
-    wire [3:0] spi_state_cnt;
-    assign spi_state_cnt = spi_cntr[clk_div +: 4];
+    wire spi_tick = cntr[clk_div];
     
-    assign sck = spi_state_cnt[0];
-    //CNTRL logic
-    reg [1:0] state = 0;    //State machine state
-    reg [7:0] TX_buffer;
-    reg [7:0] RX_buffer;
+    //Controll state machine
+    reg [1:0] state = 0;
+    reg [7:0] TX_BUFFER;
+    reg [7:0] RX_BUFFER;
+    reg spi_tick_prev;
+    reg [3:0] tx_count;
     
-    assign MOSI = TX_buffer[7];
-    //SPI transmit state machine
-    always @ (posedge clk)
+    assign MOSI = TX_BUFFER[7];
+    
+    //State machine
+    always @(posedge clk)
     begin
         if(~rstn)
             begin
                 state <= 0;
-                busy <= 0;
-                tx_complete <= 0;
+                TX_BUFFER <= 0;
                 data_out <= 0;
-                TX_buffer <= 0;
-                spi_enable <= 0;
+                tx_complete <= 0;
+                spi_tick_prev <= 0;
+                tx_count <= 0;
+                sck <= 0;
+                cntr_enable <= 0;
             end
         else
-            begin
-                case(state)
-                    2'b00:  //Idle/setup state
-                        begin
-                            busy <= 0;
-                            tx_complete <= 0;
-                            spi_enable <= 0;                            
-                            //Set up transmission when start signal is given
-                            if(start_tx)
-                                begin                                    
-                                    state <= 2'b01;
-                                    TX_buffer <= data_in;
-                                    spi_enable <= 1;
-                                    busy <= 1;
-                                end
-                        end
-                    2'b01:  //Transfer state
-                        begin              
-                            #1; //DEBUG TIME DELAY
-                            //On falling edge shift out tx data
-                            if(spi_cntr[0] == 0)
-                                TX_buffer <= {TX_buffer[6:0],1'b0};
-                            //On rising edge shift in data
-                            if(spi_cntr[0] == 1)
-                                RX_buffer <= {RX_buffer[6:0],MISO};
-                            //After 8 bits terminate transfer
-                            if(spi_state_cnt == 4'b1111)
-                                begin
-                                    spi_enable <= 0;
-                                    state <= 2'b10;
-                                end
-                        end
-                    2'b10:  //Transfer complete state
-                        begin
-                            data_out <= RX_buffer;
-                            TX_buffer <= 0;
-                            state <= 2'b00;
-                            tx_complete <= 1;
-                        end
-                    default : state <= 0;
-                endcase
-            end
-    end   
-
+            case(state)
+                2'b00:  //Idle state
+                    begin
+                        #1; //Debug delay
+                        tx_complete <= 0;
+                        spi_tick_prev <= 0;
+                        tx_count <= 0;
+                        busy <= 0;
+                        if(start_tx)
+                            begin
+                                state <= 2'b01;
+                                busy <= 1;
+                                TX_BUFFER <= data_in;
+                                cntr_enable <= 1;
+                                RX_BUFFER <= 0;
+                            end
+                    end
+                2'b01:  //Transmit state
+                    begin
+                        #1; //Debug delay                        
+                        //Shift data out falling edge
+                        if((spi_tick_prev) && (~spi_tick))
+                            begin
+                                TX_BUFFER <= {TX_BUFFER[6:0],1'b0};
+                                sck <= 0;
+                                tx_count <= tx_count + 1;
+                            end
+                        //Sample data on rising edge
+                        if((~spi_tick_prev) && (spi_tick) && (tx_count != 4'd8))
+                            begin
+                                RX_BUFFER <= {RX_BUFFER[6:0],MISO};
+                                sck <= 1;
+                            end
+                        //Update tick  
+                        spi_tick_prev <= spi_tick;
+                        //Terminate transfer
+                        if(tx_count == 4'd8)
+                            begin
+                                state <= 2'b10;
+                                sck <= 0;                                
+                            end                                                
+                    end
+                2'b10:  //TX done state
+                    begin
+                        #1; //Debug delay
+                        tx_complete <= 1;
+                        state <= 2'b00;
+                        data_out <= RX_BUFFER;
+                        TX_BUFFER <= 0;
+                        cntr_enable <= 0;
+                    end
+                default:
+                    state <= 0;
+            endcase
+    end
+    
 endmodule

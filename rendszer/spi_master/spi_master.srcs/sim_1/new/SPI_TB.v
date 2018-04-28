@@ -26,14 +26,14 @@ module SPI_TB(
     wire sck;
     wire MOSI;
     //Input
-    reg MISO = 1'b1;
+    wire MISO = MOSI;
     
     //Controll
     always
     begin
         #20;
         @(posedge clk) #1;
-        data_in <= 8'h55;
+        data_in <= 8'hD9;
         clk_div <= 0;
         start_tx <= 1;
         @(posedge clk) #1;
@@ -41,35 +41,14 @@ module SPI_TB(
         wait(tx_complete);
         #20;
         @(posedge clk) #1;
-        data_in <= 8'hAA;
-        clk_div <= 0;
+        data_in <= 8'h3F;
+        clk_div <= 1;
         start_tx <= 1;
         @(posedge clk) #1;
         start_tx <= 0;
         #5000;
     end
     
-    //Read test
-    always
-    begin
-        wait(tx_complete);
-        #1 MISO <= 1;
-        @(negedge sck);
-        #1 MISO <= 0;
-        @(negedge sck);
-        #1 MISO <= 1;
-        @(negedge sck);
-        #1 MISO <= 0;
-        @(negedge sck);
-        #1 MISO <= 0;
-        @(negedge sck);
-        #1 MISO <= 1;
-        @(negedge sck);
-        #1 MISO <= 0;
-        @(negedge sck);
-        #1 MISO <= 1;
-        #5000;        
-    end
     
     //UUT instance
     SPI_MASTER UUT( .clk(clk),
