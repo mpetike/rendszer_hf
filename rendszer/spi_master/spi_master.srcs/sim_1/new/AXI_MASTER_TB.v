@@ -68,6 +68,11 @@ module AXI_MASTER_TB(
     wire [1:0] S_AXI_RRESP;
     wire  S_AXI_RVALID;
     reg  S_AXI_RREADY = 0;
+    //SPI IO
+    wire MOSI;
+    wire MISO;
+    wire SCK;
+    wire TX_DONE_IT;
     
     //AXI Lite transaction tasks
     //Write transaction
@@ -115,21 +120,25 @@ module AXI_MASTER_TB(
         end
     endtask
     
-    //Read transaction
-    
+    //Read buffer    
     reg [31:0] read_data;
     
     //Test cases
     always
     begin
         #200;
-        axi_write(0,2);
+        axi_write(4,0);
         #20
-        axi_write(4,4);
+        axi_write(12,32'b10);
         #20
+        axi_write(0,8'h5f);
+        #200
         axi_read(0,read_data);
         #5000;
     end
+    
+    //TESTCASE
+    assign MISO = MOSI; //Loopback
     
     //Connect to UUT
     AXI_LITE_CNTRL UUT( .S_AXI_ACLK(S_AXI_ACLK),
@@ -150,7 +159,11 @@ module AXI_MASTER_TB(
                         .S_AXI_RDATA(S_AXI_RDATA),
                         .S_AXI_RRESP(S_AXI_RRESP),
                         .S_AXI_RVALID(S_AXI_RVALID),
-                        .S_AXI_RREADY(S_AXI_RREADY)
+                        .S_AXI_RREADY(S_AXI_RREADY),
+                        .MOSI(MOSI),
+                        .MISO(MISO),
+                        .SCK(SCK),
+                        .TX_DONE_IT(TX_DONE_IT)
                         );
     
 endmodule

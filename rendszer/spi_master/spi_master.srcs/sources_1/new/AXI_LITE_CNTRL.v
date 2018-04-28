@@ -28,7 +28,14 @@ module AXI_LITE_CNTRL(
                         output reg [31:0] S_AXI_RDATA,
                         output reg [1:0] S_AXI_RRESP,
                         output reg  S_AXI_RVALID,
-                        input wire  S_AXI_RREADY
+                        input wire  S_AXI_RREADY,
+                        //SPI signals
+                        output CS,
+                        output MOSI,
+                        output SCK,
+                        input MISO,
+                        //Interrupt
+                        output reg TX_DONE_IT
     );
     
     reg aw_enable = 0;
@@ -101,7 +108,9 @@ module AXI_LITE_CNTRL(
     reg [31:0] input_reg2 = 0;
     reg [31:0] input_reg3 = 0;
     //------------------------
-    
+    //New TX trigger signal
+    reg NEW_TX = 0;    
+    reg TX_DONE_CLEAR;
     always @ (posedge S_AXI_ACLK)
     begin
         if(~S_AXI_ARESETN)
@@ -119,7 +128,10 @@ module AXI_LITE_CNTRL(
                             2'h0:
                                 begin
                                     if(S_AXI_WSTRB[0] == 1)
-                                        input_reg0[7:0] <= S_AXI_WDATA[7:0];
+                                        begin
+                                            input_reg0[7:0] <= S_AXI_WDATA[7:0];
+                                            NEW_TX <= 1;
+                                        end
                                     if(S_AXI_WSTRB[1] == 1)
                                         input_reg0[15:8] <= S_AXI_WDATA[15:8];
                                     if(S_AXI_WSTRB[2] == 1)
@@ -130,7 +142,7 @@ module AXI_LITE_CNTRL(
                             2'h1:
                                 begin
                                     if(S_AXI_WSTRB[0] == 1)
-                                        input_reg1[7:0] <= S_AXI_WDATA[7:0];
+                                            input_reg1[7:0] <= S_AXI_WDATA[7:0];                                            
                                     if(S_AXI_WSTRB[1] == 1)
                                         input_reg1[15:8] <= S_AXI_WDATA[15:8];
                                     if(S_AXI_WSTRB[2] == 1)
@@ -141,7 +153,10 @@ module AXI_LITE_CNTRL(
                             2'h2:
                                 begin
                                     if(S_AXI_WSTRB[0] == 1)
-                                        input_reg2[7:0] <= S_AXI_WDATA[7:0];
+                                        begin
+                                            input_reg2[7:0] <= S_AXI_WDATA[7:0];
+                                            TX_DONE_CLEAR <= 1;
+                                        end
                                     if(S_AXI_WSTRB[1] == 1)
                                         input_reg2[15:8] <= S_AXI_WDATA[15:8];
                                     if(S_AXI_WSTRB[2] == 1)
@@ -164,6 +179,11 @@ module AXI_LITE_CNTRL(
                                 begin
                                 end
                         endcase
+                    end
+                else
+                    begin
+                        NEW_TX <= 0;
+                        TX_DONE_CLEAR <= 0;
                     end
             end
     end
@@ -240,10 +260,10 @@ module AXI_LITE_CNTRL(
     
     //Read logic
     //----Output registers------
-    reg [31:0] output_reg0 = 0;
-    reg [31:0] output_reg1 = 0;
-    reg [31:0] output_reg2 = 0;
-    reg [31:0] output_reg3 = 0;
+    wire [31:0] output_reg0;
+    wire [31:0] output_reg1;
+    wire [31:0] output_reg2;
+    wire [31:0] output_reg3;
     //--------------------------
     
     always @ (posedge S_AXI_ACLK)
@@ -266,11 +286,68 @@ module AXI_LITE_CNTRL(
             end
     end
     
-    //SPI register logic
-    //TESTCASE
+    //--------------------------------------------------------------------------
+    //SPI controll logic
+       
+    //Data register IN trigger
+    wire SPI_busy;    
+    wire TX_START = ~SPI_busy & NEW_TX & CS;
+    
+    //IT generation & TX_COMPLETE flag 
+    reg TX_DONE_REG;
+    wire TX_DONE_SPI;
+    assign output_reg2[0] = TX_DONE_REG;
+    assign output_reg2[1] = input_reg2[1];    
+    
+    
     always @ (posedge S_AXI_ACLK)
     begin
-        output_reg0 <= input_reg0 + input_reg1;
+        if(S_AXI_ARESETN)
+            begin
+                TX_DONE_REG <= 0;
+                TX_DONE_IT <= 0;
+            end
+        else
+            begin
+                if(TX_DONE_SPI)
+                    begin
+                        TX_DONE_REG <= 1;
+                        if(input_reg2[1])
+                            TX_DONE_IT <= 0;
+                    end
+                else if(((TX_DONE_CLEAR) && (input_reg2[0])) || (TX_START))
+                    begin
+                        TX_DONE_REG <= 0;
+                        TX_DONE_IT <= 0;
+                    end
+                else
+                    TX_DONE_IT <= 0;
+            end
     end
+    
+    //REG4 CS BUSY
+    assign CS = input_reg3[1];
+    assign output_reg3[1] = input_reg3[1];
+    assign output_reg3[0] = SPI_busy;
+    
+    //SPI connection
+    SPI_MASTER SPI( .clk(S_AXI_ACLK),
+                    .rstn(S_AXI_ARESETN),
+                    .clk_div(input_reg1[2:0]),
+                    .data_in(input_reg0[7:0]),
+                    .data_out(output_reg0[7:0]),
+                    .busy(SPI_busy),
+                    .tx_complete(TX_DONE_SPI),
+                    .start_tx(TX_START),
+                    .MOSI(MOSI),
+                    .MISO(MISO),
+                    .sck(SCK)
+                    );
+    
+    //Etc
+    assign output_reg0[31:8] = 24'h0;
+    assign output_reg1 = {29'h0,input_reg1[2:0]};
+    assign output_reg2[31:2] = 30'h0;
+    assign output_reg3[31:2] = 30'h0;
     
 endmodule
