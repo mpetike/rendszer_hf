@@ -2,8 +2,8 @@
 # Vivado v2017.2 (64-bit)
 # SW Build 1909853 on Thu Jun 15 18:39:09 MDT 2017
 # IP Build 1909766 on Thu Jun 15 19:58:00 MDT 2017
-# Start of session at: Sat Apr 28 21:06:09 2018
-# Process ID: 4472
+# Start of session at: Sun Apr 29 15:15:19 2018
+# Process ID: 3488
 # Current directory: C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/rendszer/spi_master/spi_master.runs/synth_1
 # Command line: vivado.exe -log AXI_LITE_CNTRL.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source AXI_LITE_CNTRL.tcl
 # Log file: C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/rendszer/spi_master/spi_master.runs/synth_1/AXI_LITE_CNTRL.vds
@@ -15,9 +15,9 @@ Starting synth_design
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7k70t-fbg676'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k70t-fbg676'
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 8100 
+INFO: Helper process launched with PID 6760 
 ---------------------------------------------------------------------------------
-Starting Synthesize : Time (s): cpu = 00:00:04 ; elapsed = 00:00:06 . Memory (MB): peak = 306.523 ; gain = 77.211
+Starting Synthesize : Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 306.141 ; gain = 76.684
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-638] synthesizing module 'AXI_LITE_CNTRL' [C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/rendszer/spi_master/spi_master.srcs/sources_1/new/AXI_LITE_CNTRL.v:5]
 INFO: [Synth 8-226] default block is never used [C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/rendszer/spi_master/spi_master.srcs/sources_1/new/AXI_LITE_CNTRL.v:127]
@@ -25,23 +25,23 @@ INFO: [Synth 8-638] synthesizing module 'SPI_MASTER' [C:/Users/Peti/Documents/VI
 INFO: [Synth 8-256] done synthesizing module 'SPI_MASTER' (1#1) [C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/rendszer/spi_master/spi_master.srcs/sources_1/new/SPI_MASTER.v:5]
 INFO: [Synth 8-256] done synthesizing module 'AXI_LITE_CNTRL' (2#1) [C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/rendszer/spi_master/spi_master.srcs/sources_1/new/AXI_LITE_CNTRL.v:5]
 ---------------------------------------------------------------------------------
-Finished Synthesize : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 345.848 ; gain = 116.535
+Finished Synthesize : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 345.465 ; gain = 116.008
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:06 ; elapsed = 00:00:08 . Memory (MB): peak = 345.848 ; gain = 116.535
+Finished Constraint Validation : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 345.465 ; gain = 116.008
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7k70tfbg676-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:06 ; elapsed = 00:00:08 . Memory (MB): peak = 345.848 ; gain = 116.535
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 345.465 ; gain = 116.008
 ---------------------------------------------------------------------------------
-INFO: [Device 21-403] Loading part xc7k70tfbg676-1
 INFO: [Synth 8-5544] ROM "state" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Device 21-403] Loading part xc7k70tfbg676-1
 WARNING: [Synth 8-6014] Unused sequential element cntr_reg was removed.  [C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/rendszer/spi_master/spi_master.srcs/sources_1/new/SPI_MASTER.v:31]
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:08 . Memory (MB): peak = 345.848 ; gain = 116.535
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 345.465 ; gain = 116.008
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -71,7 +71,7 @@ Detailed RTL Component Info :
 	   4 Input      2 Bit        Muxes := 1     
 	   4 Input      1 Bit        Muxes := 13    
 	   5 Input      1 Bit        Muxes := 1     
-	   2 Input      1 Bit        Muxes := 11    
+	   2 Input      1 Bit        Muxes := 10    
 ---------------------------------------------------------------------------------
 Finished RTL Component Statistics 
 ---------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ Detailed RTL Component Info :
 +---Muxes : 
 	   2 Input     32 Bit        Muxes := 4     
 	   4 Input     32 Bit        Muxes := 5     
-	   2 Input      1 Bit        Muxes := 8     
+	   2 Input      1 Bit        Muxes := 7     
 	   4 Input      1 Bit        Muxes := 2     
 Module SPI_MASTER 
 Detailed RTL Component Info : 
@@ -149,7 +149,6 @@ WARNING: [Synth 8-3917] design AXI_LITE_CNTRL has port S_AXI_RDATA[11] driven by
 WARNING: [Synth 8-3917] design AXI_LITE_CNTRL has port S_AXI_RDATA[10] driven by constant 0
 WARNING: [Synth 8-3917] design AXI_LITE_CNTRL has port S_AXI_RDATA[9] driven by constant 0
 WARNING: [Synth 8-3917] design AXI_LITE_CNTRL has port S_AXI_RDATA[8] driven by constant 0
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (TX_DONE_IT_reg)
 INFO: [Synth 8-3886] merging instance 'S_AXI_RRESP_reg[0]' (FDRE) to 'S_AXI_RRESP_reg[1]'
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (\S_AXI_RRESP_reg[1] )
 INFO: [Synth 8-3886] merging instance 'S_AXI_BRESP_reg[0]' (FDRE) to 'S_AXI_BRESP_reg[1]'
@@ -256,7 +255,7 @@ WARNING: [Synth 8-3332] Sequential element (input_reg1_reg[21]) is unused and wi
 WARNING: [Synth 8-3332] Sequential element (input_reg1_reg[20]) is unused and will be removed from module AXI_LITE_CNTRL.
 INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:11 ; elapsed = 00:00:16 . Memory (MB): peak = 479.926 ; gain = 250.613
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:10 ; elapsed = 00:00:16 . Memory (MB): peak = 479.793 ; gain = 250.336
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -269,7 +268,7 @@ No constraint files found.
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:11 ; elapsed = 00:00:17 . Memory (MB): peak = 479.926 ; gain = 250.613
+Finished Timing Optimization : Time (s): cpu = 00:00:10 ; elapsed = 00:00:16 . Memory (MB): peak = 479.793 ; gain = 250.336
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -281,7 +280,7 @@ Report RTL Partitions:
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:11 ; elapsed = 00:00:17 . Memory (MB): peak = 480.863 ; gain = 251.551
+Finished Technology Mapping : Time (s): cpu = 00:00:10 ; elapsed = 00:00:16 . Memory (MB): peak = 480.793 ; gain = 251.336
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -305,7 +304,7 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:12 ; elapsed = 00:00:17 . Memory (MB): peak = 480.863 ; gain = 251.551
+Finished IO Insertion : Time (s): cpu = 00:00:11 ; elapsed = 00:00:17 . Memory (MB): peak = 480.793 ; gain = 251.336
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -318,7 +317,7 @@ Report Check Netlist:
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:12 ; elapsed = 00:00:17 . Memory (MB): peak = 480.863 ; gain = 251.551
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:11 ; elapsed = 00:00:17 . Memory (MB): peak = 480.793 ; gain = 251.336
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -330,25 +329,25 @@ Report RTL Partitions:
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:12 ; elapsed = 00:00:17 . Memory (MB): peak = 480.863 ; gain = 251.551
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:11 ; elapsed = 00:00:17 . Memory (MB): peak = 480.793 ; gain = 251.336
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:12 ; elapsed = 00:00:17 . Memory (MB): peak = 480.863 ; gain = 251.551
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:11 ; elapsed = 00:00:17 . Memory (MB): peak = 480.793 ; gain = 251.336
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:12 ; elapsed = 00:00:17 . Memory (MB): peak = 480.863 ; gain = 251.551
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:11 ; elapsed = 00:00:17 . Memory (MB): peak = 480.793 ; gain = 251.336
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:12 ; elapsed = 00:00:17 . Memory (MB): peak = 480.863 ; gain = 251.551
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:11 ; elapsed = 00:00:17 . Memory (MB): peak = 480.793 ; gain = 251.336
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -366,13 +365,13 @@ Report Cell Usage:
 +------+------+------+
 |1     |BUFG  |     1|
 |2     |LUT1  |     3|
-|3     |LUT2  |     7|
+|3     |LUT2  |     9|
 |4     |LUT3  |    14|
 |5     |LUT4  |    24|
 |6     |LUT5  |     6|
 |7     |LUT6  |    15|
 |8     |MUXF7 |     1|
-|9     |FDRE  |    77|
+|9     |FDRE  |    78|
 |10    |FDSE  |     1|
 |11    |IBUF  |    21|
 |12    |OBUF  |    45|
@@ -382,26 +381,26 @@ Report Instance Areas:
 +------+---------+-----------+------+
 |      |Instance |Module     |Cells |
 +------+---------+-----------+------+
-|1     |top      |           |   215|
-|2     |  SPI    |SPI_MASTER |    97|
+|1     |top      |           |   218|
+|2     |  SPI    |SPI_MASTER |    99|
 +------+---------+-----------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:12 ; elapsed = 00:00:17 . Memory (MB): peak = 480.863 ; gain = 251.551
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:11 ; elapsed = 00:00:17 . Memory (MB): peak = 480.793 ; gain = 251.336
 ---------------------------------------------------------------------------------
-Synthesis finished with 0 errors, 0 critical warnings and 147 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:12 ; elapsed = 00:00:17 . Memory (MB): peak = 480.863 ; gain = 251.551
-Synthesis Optimization Complete : Time (s): cpu = 00:00:12 ; elapsed = 00:00:17 . Memory (MB): peak = 480.863 ; gain = 251.551
+Synthesis finished with 0 errors, 0 critical warnings and 146 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:11 ; elapsed = 00:00:17 . Memory (MB): peak = 480.793 ; gain = 251.336
+Synthesis Optimization Complete : Time (s): cpu = 00:00:11 ; elapsed = 00:00:17 . Memory (MB): peak = 480.793 ; gain = 251.336
 INFO: [Project 1-571] Translating synthesized netlist
 INFO: [Netlist 29-17] Analyzing 21 Unisim elements for replacement
-INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Netlist 29-28] Unisim Transformation completed in 1 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-20 Infos, 126 Warnings, 0 Critical Warnings and 0 Errors encountered.
+19 Infos, 126 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:15 ; elapsed = 00:00:27 . Memory (MB): peak = 552.910 ; gain = 331.363
+synth_design: Time (s): cpu = 00:00:15 ; elapsed = 00:00:26 . Memory (MB): peak = 552.531 ; gain = 330.836
 INFO: [Common 17-1381] The checkpoint 'C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/rendszer/spi_master/spi_master.runs/synth_1/AXI_LITE_CNTRL.dcp' has been generated.
-report_utilization: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.087 . Memory (MB): peak = 552.910 ; gain = 0.000
-INFO: [Common 17-206] Exiting Vivado at Sat Apr 28 21:06:41 2018...
+report_utilization: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.072 . Memory (MB): peak = 552.531 ; gain = 0.000
+INFO: [Common 17-206] Exiting Vivado at Sun Apr 29 15:15:52 2018...

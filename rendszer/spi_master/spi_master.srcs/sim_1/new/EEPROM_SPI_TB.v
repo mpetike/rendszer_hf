@@ -20,11 +20,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module AXI_MASTER_TB(
+module EEPROM_SPI_TB(
     );
-    
-    //Whole lot of fuckin' wires
-    
     
     
     //Clock generation
@@ -126,19 +123,43 @@ module AXI_MASTER_TB(
     
     //Test cases
     always
-    begin
+    begin        
+        #40;
+        //Set up SPI
+        axi_write(4,3); //CLK div /16
+        axi_write(8,8'b10);     //IT enable
+        //Pull CS low
+        axi_write(12,8'b10);
+        //WRITE LATCH ON
+        axi_write(0,8'b00000110);
+        //CS high
+        wait(TX_DONE_IT);
+        axi_write(12,8'b00);
         #50;
-        axi_write(4,0);
-        axi_write(12,32'b10);
-        axi_write(8,8'b10);
-        axi_write(0,8'h5f);
-        #200
-        axi_read(0,read_data);
-        #5000;
-    end
-    
-    //TESTCASE
-    assign MISO = MOSI; //Loopback
+        //CS low
+        axi_write(12,8'b10);
+        //Write data
+        axi_write(0,8'b00000010); wait(TX_DONE_IT);   //Write instruction
+        axi_write(0,8'b00000010); wait(TX_DONE_IT);   //ADDRESS
+        axi_write(0,8'hAA); wait(TX_DONE_IT);   //DATA
+        axi_write(0,8'hBB); wait(TX_DONE_IT);
+        axi_write(0,8'hC5); wait(TX_DONE_IT); 
+        axi_write(12,8'b00); //CS high
+        #500;
+        //Read data
+        axi_write(12,8'b10); //CS low
+        axi_write(0,8'b00000011); wait(TX_DONE_IT);   //Read instruction
+        axi_write(0,8'b00000010); wait(TX_DONE_IT);   //ADDRESS
+        axi_write(0,8'b0); wait(TX_DONE_IT);  //Start transfer
+        axi_read(0,read_data);  //READû
+        axi_write(0,8'b0); wait(TX_DONE_IT);  //Start transfer
+        axi_read(0,read_data);  //READ
+        axi_write(0,8'b0); wait(TX_DONE_IT);  //Start transfer
+        axi_read(0,read_data);  //READ
+        axi_write(12,8'b00); //CS high
+        #5000000;
+    end   
+
     
     //Connect to UUT
     AXI_LITE_CNTRL UUT( .S_AXI_ACLK(S_AXI_ACLK),
@@ -166,5 +187,14 @@ module AXI_MASTER_TB(
                         .TX_DONE_IT(TX_DONE_IT),
                         .CS(CS)
                         );
+
+    //EEPROM
+    M25AA010A EEPROM(   .SI(MOSI),
+                        .SCK(SCK),
+                        .CS_N(CS),
+                        .WP_N(1'b1),
+                        .HOLD_N(1'b1),
+                        .RESET(~S_AXI_ARESETN),
+                        .SO(MISO));
     
 endmodule
