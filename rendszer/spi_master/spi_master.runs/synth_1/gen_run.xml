@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenRun Id="synth_1" LaunchPart="xc7k70tfbg676-1" LaunchTime="1525007716">
-  <File Type="RDS-PROPCONSTRS" Name="AXI_LITE_CNTRL_drc_synth.rpt"/>
   <File Type="PA-TCL" Name="AXI_LITE_CNTRL.tcl"/>
+  <File Type="RDS-PROPCONSTRS" Name="AXI_LITE_CNTRL_drc_synth.rpt"/>
   <File Type="RDS-RDS" Name="AXI_LITE_CNTRL.vds"/>
   <File Type="RDS-UTIL" Name="AXI_LITE_CNTRL_utilization_synth.rpt"/>
   <File Type="RDS-UTIL-PB" Name="AXI_LITE_CNTRL_utilization_synth.pb"/>
