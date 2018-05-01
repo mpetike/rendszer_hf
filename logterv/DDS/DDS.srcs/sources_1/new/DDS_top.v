@@ -1,12 +1,15 @@
 `timescale 1ns / 1ps
 
 
-module DDS( //Reset,clock
+module DDS(     //Reset,clock
                 input clk,
                 input rst,
                 //Controll
                 input [23:0] cntrl_word,
-                
+                input [1:0] wave_sel,
+                input [14:0] attenn,
+                //Output
+                output [23:0] wave_out,
                 //DEBUG
                 output [23:0] nco_out,
                 output [23:0] sin_out,
@@ -21,6 +24,7 @@ module DDS( //Reset,clock
     
     always @ (posedge clk)
     begin
+        #1;
         if(rst)
             nco_cnt <= 0;
         else
@@ -29,9 +33,6 @@ module DDS( //Reset,clock
             end
     end    
     
-    
-    //LFSR 
-
     //Dither
     wire [11:0] rnd_gen;
     wire [23:0] dith_out = nco_cnt + rnd_gen[11:0];    
@@ -51,7 +52,8 @@ module DDS( //Reset,clock
    
     //LUT be és kimenetének manipulálása
     always @ (posedge clk)
-    begin     
+    begin
+        #1;     
         if(rst)
             begin
                 LUT_address <= 0;
@@ -74,7 +76,7 @@ module DDS( //Reset,clock
                         LUT_address <= dith_out[21:12];
                     end
                 //LUT kimenet mûveletei
-                if(quad_sel_z2)     // 2. és 3. negyed
+                if(quad_sel_z1)     // 2. és 3. negyed
                     begin
                         sin_signal <= 0 - sin_lut_out;
                     end
@@ -99,6 +101,7 @@ module DDS( //Reset,clock
     
     always @ (posedge clk)
     begin
+        #1;
         case(nco_tri_in[23:22])
             2'b00 : triangle_out[23:1] <= nco_tri_in;
             2'b01 : triangle_out[23:1] <= 24'h800000 - nco_tri_in;
@@ -107,6 +110,33 @@ module DDS( //Reset,clock
         endcase
 
     end
+    
+    //Output select
+    wire signed [23:0] selected_wave;
+    assign selected_wave = (wave_sel == 2'b0)? sin_out: (wave_sel == 2'b01)? tri_out: (wave_sel == 2'b10) ? sqr_out : 24'h0;
+    
+    
+    //Attenuation
+    reg signed [39:0] multiply_out = 0;
+    wire signed [16:0] attennuation;
+    
+    assign attennuation = {1'b0,attenn};
+        
+    always @ (posedge clk)
+    begin
+        #1;
+        if(rst)
+            begin
+                multiply_out <= 0;
+            end
+        else
+            begin
+                multiply_out <= selected_wave * attennuation;
+            end
+    end
+    
+    assign wave_out = multiply_out[38:14];
+    
     
     //Debug connections
     assign nco_out = nco_cnt;    
