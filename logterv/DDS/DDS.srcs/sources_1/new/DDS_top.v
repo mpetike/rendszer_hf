@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 
-module DDS_top( //Reset,clock
+module DDS( //Reset,clock
                 input clk,
                 input rst,
                 //Controll
@@ -10,7 +10,8 @@ module DDS_top( //Reset,clock
                 //DEBUG
                 output [23:0] nco_out,
                 output [23:0] sin_out,
-                output [23:0] tri_out
+                output [23:0] tri_out,
+                output [23:0] sqr_out
     );
 
     //NCO    
@@ -72,7 +73,10 @@ module DDS_top( //Reset,clock
     SIN_LUT singen( .clk(clk),
                     .address(LUT_address),
                     .sin_out(sin_lut_out));
+                    
     //COMP (SQR Wave)
+    wire [23:0] sqr_signal;
+    assign sqr_signal = (nco_cnt[23])? 24'h7FFFFF: 24'h800000;
     
     //TRI Wave
     reg signed [23:0] triangle_out = 0;
@@ -93,4 +97,5 @@ module DDS_top( //Reset,clock
     assign nco_out = nco_cnt;    
     assign sin_out = sin_signal;
     assign tri_out = triangle_out;
+    assign sqr_out = sqr_signal;
 endmodule
