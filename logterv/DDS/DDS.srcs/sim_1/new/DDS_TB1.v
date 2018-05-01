@@ -13,15 +13,23 @@ module DDS_TB1(
     end
     
     //reset generation
-    reg rst = 0;
+    reg rst = 1;
+    always
+    begin
+        #20;
+        rst <= 0;
+    end
+    
     
     //DEBUG connections
     wire [23:0] NCO_OUT;
     wire [23:0] cntrl_word;
-    assign cntrl_word = 419430;
+    assign cntrl_word = 419430 / 2;
     wire [23:0] sinusoid;
     wire [23:0] triangle;
     wire [23:0] sqrwave;
+    wire [23:0] nco_dith;
+    wire [11:0] rnd;
     
     //UUT
     DDS UUT(    .clk(clk),
@@ -30,7 +38,9 @@ module DDS_TB1(
                     .nco_out(NCO_OUT),
                     .sin_out(sinusoid),
                     .tri_out(triangle),
-                    .sqr_out(sqrwave)
+                    .sqr_out(sqrwave),
+                    .nco_dith(nco_dith),
+                    .rnd(rnd)
                     );
     
 endmodule
