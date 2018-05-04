@@ -83,6 +83,9 @@
 !*.h
 !*.elf
 !*.bmm
+!*.png
+!*.jpg
+!*.jpeg
 !*.xmp
 !*.tex
 !*.pdf
