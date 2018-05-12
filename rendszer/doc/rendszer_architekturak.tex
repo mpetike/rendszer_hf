@@ -10,6 +10,14 @@
 \usepackage{fancyhdr}
 \usepackage[none]{hyphenat}
 
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
 \usepackage[nottoc,notlot,notlof]{tocbibind}
 \usepackage{graphicx}
 \usepackage{caption}
@@ -26,6 +34,7 @@
 
 \usepackage{hyperref}
 
+\usepackage{listings}
  
 \urlstyle{same}
 
@@ -87,25 +96,34 @@ Méréstechnika és Információs Rendszerek Tanszék\\
 \subsubsection{}
 
 
-\section{}
+\section{SPI modul működése}
 
 \subsection{}
 
 \subsection{}
 
 
-\section{}
+\section{Szimuláció}
+A létrehozott periféria működése szimulációval lett ellenőrizve. A szimulációhoz a Vivado beépített szimulátorát használtuk. A perifériához az AXI interfész felől egy AXI-LITE Master-t szimuláló BFM lett illesztve, míg az SPI oldalról egy Microchip EEPROM funkcionális verilog modellje lett illesztve. A szimuláció egy az EEPROM-ba való írást, majd onnan a beírt adatok kiolvasását valósítja meg.
 
-\subsection{}
+A szimuláció 100MHz-s órajelet használ, a reset vonal induláskor 20ns ideig aktív alacsony állapotban van, majd visszatér magas szintre, ami elindítja az összes eszközt.
 
-\subsection{}
+Az SPI modul /16 órejelosztást használ, amivel az SCK 6,25 MHz lesz.
+\subsection{BFM}
+
+\subsection{EEPROM}
+Az eszközhöz egy Microchip 25AA010A EEPROM szimulációs verilog modellje van illesztve, hogy a valós működés is tesztelve legyen. Ez a modul egy 1kbit méretű flash EEPROM-ot valósít meg, valós időzítési értékekkel. Az eszköz leírása \href{http://ww1.microchip.com/downloads/en/DeviceDoc/21832H.pdf}{ezen a linken} érhető el.
+
+Az eszköz valós időzítéseket is szimulál, ezért például az SCK órajel nem lehet gyorsabb 10MHz-nél, ugyanis az eszköz nem lesz képes elég gyorsan reagálni az órajel változására. Ezt az SPI órajelosztójának megfelelő beállításával lehet elérni.
+
+Hogy az eszközt írhassuk, először egy instrukciót kell neki küldeni ami engedélyezi az írást az eszközön belül. Ehhez egy külön írási ciklusra van szükségünk ahol $\overline{CS}$ jelet aktív alacsonyra kell húzni, majd az írásengedélyező (WREN) parancsot kiküldve a $\overline{CS}$ jelet egy órajelciklus idejére vissza kell engedni magas szintre. Ha ezt nem tesszük meg, nem fogunk tudni írni az eszközbe. Ezek után lehet ténylegesen írni az eszközt. Íráskor először egy 8-bites írás instrukciót kell kiküldeni, ez után jöhet a cím, szintén 8-biten, majd ezt követően kezdődik meg a tényleges adat kiküldése. Lehet bájtos, illetve burst módban írni, viszont burst módban maximum 16 bájtot lehet kiküldeni, ugyanis az EEPROM csak ekkora bemeneti bufferrel rendelkezik. Az írást a $\overline{CS}$ magasra húzásával lehet befejezni, ekkor az írásengedélyező belső flag automatikusan 0-ra áll vissza. Az EEPROM verilog modelljében apró változtatásokat kellett eszközölni, ugyanis a valóságot szimulálva 5ms-ig késleltet mielőtt az adatot ténylegesen beírja az adattároló regisztereibe. Ezt hogy a szimuláció rövidebb legyen, és a kapott hullámformák átláthatóbbak legyenek 100ns-re csökkentettük.
+
+\subsection{Szimuláció eredménye}
 
 
-\section{}
+\section{Forráskód}
 
-\subsection{}
-
-\subsection{}
+\subsection{SPI és busz illesztő}
 
 \subsubsection{}
 
