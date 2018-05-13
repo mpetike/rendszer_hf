@@ -79,38 +79,33 @@ Méréstechnika és Információs Rendszerek Tanszék\\
 \setcounter{page}{1}
 \setcounter{tocdepth}{4}
 \setcounter{secnumdepth}{4}
-%\setlength{\parskip}{1em}
-
-\section{}
 
 
-\section{}
-
-\subsection{}
-
-\subsection{}
-
-\subsection{}
-
-\subsubsection{}
-
-\subsubsection{}
+\section{Feladat}
 
 
-\section{SPI modul működése}
+\section{AXI Lite}
 
-\subsection{}
+\section{SPI}
 
-\subsection{}
+\section{Tervezés}
+
+\section{Verilog megvalósítás}
+
+\subsection{AXI Lite illesztő}
+
+\subsection{SPI modul}
 
 
 \section{Szimuláció}
 A létrehozott periféria működése szimulációval lett ellenőrizve. A szimulációhoz a Vivado beépített szimulátorát használtuk. A perifériához az AXI interfész felől egy AXI-LITE Master-t szimuláló BFM lett illesztve, míg az SPI oldalról egy Microchip EEPROM funkcionális verilog modellje lett illesztve. A szimuláció egy az EEPROM-ba való írást, majd onnan a beírt adatok kiolvasását valósítja meg.
 
-A szimuláció 100MHz-s órajelet használ, a reset vonal induláskor 20ns ideig aktív alacsony állapotban van, majd visszatér magas szintre, ami elindítja az összes eszközt.
+A szimuláció 100MHz-s órajelet használ, a reset vonal induláskor 20ns ideig aktív alacsony állapotban van, majd visszatér magas szintre, ami elindítja az összes eszközt. Ezek után futnak le az AXI taszkok, amik inicializálják az SPI perifériát, beírnak 3 bájtot az illesztett EEPROM-ba, majd ezeket ugyanonnan kiolvassa. Az egész szimuláció 20us-ot vesz igénybe.
 
-Az SPI modul /16 órejelosztást használ, amivel az SCK 6,25 MHz lesz.
+Az SPI modul /16 órejelosztást használ, amivel az SCK 6,25 MHz lesz. A SPI megszakítás küldője be lett kapcsolva ugyanis ezt használjuk az SPI tranzakciós ciklus befejeződésének figyelésére. A $\overline{CS}$ jelet manuálisan állítjuk, az SPI megfelelő regiszterébe való írással.
 \subsection{BFM}
+
+A busz funkcionális modell egyszerű verilog taszkokkal lett megvalósítva. Ezek a taszkok az AXI LITE interfészt ismertető részben bemutatott időzítési diagram szerint lettek megírva. A taszkokban az órajel felfutó éle után mindenhol egy 1ns-os késleltetés lett elhelyezve, hogy szimuláljuk a rendszerben a flip-flop-ok set-up és hold késleltetésüket.
 
 \subsection{EEPROM}
 Az eszközhöz egy Microchip 25AA010A EEPROM szimulációs verilog modellje van illesztve, hogy a valós működés is tesztelve legyen. Ez a modul egy 1kbit méretű flash EEPROM-ot valósít meg, valós időzítési értékekkel. Az eszköz leírása \href{http://ww1.microchip.com/downloads/en/DeviceDoc/21832H.pdf}{ezen a linken} érhető el.
@@ -119,25 +114,27 @@ Az eszköz valós időzítéseket is szimulál, ezért például az SCK órajel 
 
 Hogy az eszközt írhassuk, először egy instrukciót kell neki küldeni ami engedélyezi az írást az eszközön belül. Ehhez egy külön írási ciklusra van szükségünk ahol $\overline{CS}$ jelet aktív alacsonyra kell húzni, majd az írásengedélyező (WREN) parancsot kiküldve a $\overline{CS}$ jelet egy órajelciklus idejére vissza kell engedni magas szintre. Ha ezt nem tesszük meg, nem fogunk tudni írni az eszközbe. Ezek után lehet ténylegesen írni az eszközt. Íráskor először egy 8-bites írás instrukciót kell kiküldeni, ez után jöhet a cím, szintén 8-biten, majd ezt követően kezdődik meg a tényleges adat kiküldése. Lehet bájtos, illetve burst módban írni, viszont burst módban maximum 16 bájtot lehet kiküldeni, ugyanis az EEPROM csak ekkora bemeneti bufferrel rendelkezik. Az írást a $\overline{CS}$ magasra húzásával lehet befejezni, ekkor az írásengedélyező belső flag automatikusan 0-ra áll vissza. Az EEPROM verilog modelljében apró változtatásokat kellett eszközölni, ugyanis a valóságot szimulálva 5ms-ig késleltet mielőtt az adatot ténylegesen beírja az adattároló regisztereibe. Ezt hogy a szimuláció rövidebb legyen, és a kapott hullámformák átláthatóbbak legyenek 100ns-re csökkentettük.
 
-\subsection{Szimuláció eredménye}
+Olvasáshoz nem kell speciális parancsot megadni, elég az olvasás instrukció és olvasandó adat kezdőcíme, majd annyi bájtot tudunk kiolvasni amennyit akarunk, az EEPROM minden bájt után automatikusan növeli a pointer értékét. Olvasásnál nincs 16 bájtos limit, amíg el nem érjük a címtartomány végét, folyamatosan tudunk adatot kiolvasni. Az EEPROM verilog modellje a valóságot szimulálva, ha éppen nem küld adatot a MASTER felé a soros adatkimenet (SO) lábát magas impedanciás módba rakja (ez látható is a szimulációban).
 
+\subsection{Szimuláció eredménye}
+%SIMTOTAL
+Az ábrán látható a teljes szimuláció eredménye. Láthatóak az AXI periféria írások és olvasások, illetve az SPI ciklusok. A beírt 3 adatbájt olvasáskor megjelenik a kimeneten, ebből látható hogy az SPI illesztő és az EEPROM is megfelelően működik. Ezeken felül a Vivado lehetőséget ad hogy a belső regiszterek állását is ellenőrizni lehessen, ha ezt megtesszük látható lesz hogy az EEPROM-nak valóban beíródott a belső regisztereibe az adat.
+
+
+%SIMAXIWRITE
+Az fenti ábrán látható egy AXI írási ciklus. Látható hogy a cím és adatcsatorna egyszerre működtethető, mindkettő jelzi hogy új adat érkezik, majd vár a slave felől a válasz jelre hogy a handshake megtörténjen és az adat beíródjon a slave eszközbe. Az írásra a slave eszköz a write-response csatornán választ ad a megfelelő hibakóddal (esetünkben csak 0 lehet) és ezzel a master befejezi az írási ciklust. Mivel az AXI Lite nem támogat burst átvitelt így itt minden adatot egy komplett írási ciklussal kell átvinni.
+
+%SPI
+Maga az SPI működése a fenti ábrán látható. Látszik hogy a feladatban megadott üzemmód szerint felfutó SCK jelre történik az adat mintavételezése, míg lefutó élre az új adat kiküldése. Látszik hogy amíg az EEPROM-nak nem küldünk írási utasítást a kimenete (MISO) magas impedanciás állapotban van. Látható hogy a TXCOMPLETE interrupt minden tranzakció végén egy óralejre megjelenik, ezzel jelezve a ciklus befejeződését. Érdekes megfigyelni hogy mivel az EEPROM valós időzítésekkel szimulál, az új adatot csak az SCK lefutása után jelentős idővel küldi ki.
+
+%AXI READ
+Fentebb látható egy AXI olvasási ciklus. Látszik hogy a címet megadva és a handshake után megjelenik a kiolvasandó adat a megfelelő csatornáján.
 
 \section{Forráskód}
 
 \subsection{SPI és busz illesztő}
 
-\subsubsection{}
-
-\subsubsection{}
-
-\subsection{}
-
-\subsubsection{}
-
-\subsection{}
-
-\subsubsection{}
-
+\subsection{Szimulációs kód}
 
 \section{}
 
