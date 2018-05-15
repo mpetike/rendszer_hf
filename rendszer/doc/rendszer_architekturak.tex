@@ -103,9 +103,15 @@ Mivel regisztereket nem szabad egyszerre több helyről is írni ezért a bemene
 
 Az írási csatornát kezelő logika végzi a bejövő adatok kezelését. Érvényes AWVALID jelre, ha éppen nem folyik írás, jelez az AWREADY vonalon hogy képes érvényes cím fogadására és mintavételezi a AWADDR csatornát. Ezután ugyanez a handshake folyamat megy végbe az írási adat csatornán is. Ha mindkét csatornán érvényes volt a tranzakció, megtörténik a tényleges írás a címzett adatregiszter AXI\textunderscore WSTRB által megadott megfelelő bájt vonalaiba. Ezzel együtt történik az írás válasz generálása a saját csatornáján, ami itt mindig nulla: írás OK. Mivel az eszköz úgy lett megtervezve hogy az adat I/O regiszterbe való írás indít egy új SPI tranzakciót, így szükség van arra hogy detektáljuk mikor történik írás a regiszterbe. Erre egy külön reg lett létrehozva ami 1-be állítódik amikor az AXI Lite nullás regiszterébe történik írás, 0-ba ha bármi más történik. Ezzel egy egy órajelű start jelet tudunk létrehozni amit az SPI modulnak továbbítva megtörténhet az írás.
 
-Az olvasási csatorna végzi a master felől jövő írási kérések kiszolgálását. Az olvasás mindössze két csatornát igényel. 
+Az olvasási csatorna végzi a master felől jövő írási kérések kiszolgálását. Az olvasás mindössze két csatornát igényel. Érvényes olvasási handshake után a mintavételezett címnek megfelelő regiszterből megtörténik az adat kiírása a az olvasási válasz státusszal (itt mindig nulla) együtt. A kimenő regiszterek rendre mind wire adattípust használnak, ezek meghajtása vagy egy belső regiszterről történik aminek az értékét valamilyen logika határozza meg, vagy fixen nullára vannak bekötve (mivel 32 bitesek az AXI Lite regiszterek, míg legfeljebb is csak 8 bit van meghajtva egy regiszterben).
+
+A regiszterek funkciójuktól függően különbözően viselkednek. Az I/O regiszter írási oldalról az SPI adatbemenetére kapcsolódik, míg olvasási oldalról az adatkimenetéhez van kötve. Ennek a regiszternek az írása egyben egy új SPI kommunikációt is elindít. Az órajelosztást állító regiszter a beírt értékét adja vissza olvasáskor, illetve közvetlenül csatlakozik az SPI clkdiv bemenetéhez.
+
+Az AXI Lite perifériaillesztőn túl itt van elhelyezve az SPI-t indító logika, illetve a megszakítás generálása. Az SPI indítása egy egyszerű logikai és kapcsolat, ami az I/O regiszterbe történő írást jelző bitet, az SPI használatát jelölő "busy" bit negáltját és CS bit állását fogja össze. Ebből egy egy órajeles start impulzus jön létre ami elindítja az SPI modult. Az interrupt jel haszonló módon, adott bitek megfelelő állása esetén generálódik. Figyelembe veszi hogy aktiváltuk e az SPI TX\textunderscore ENABLE bitjét, és az SPI modul TXDONE kimeneti bitjét figyeli. Ha ez a kettő egyszerre igaz, egy egy órajeles megszakítást generál, jelölve hogy befejeződött az SPI kommunikáció.
 
 \subsection{SPI modul}
+
+WOO állapotgépek !!!!4444négy
 
 \section{Szimuláció}
 A létrehozott periféria működése szimulációval lett ellenőrizve. A szimulációhoz a Vivado beépített szimulátorát használtuk. A perifériához az AXI interfész felől egy AXI-LITE Master-t szimuláló BFM lett illesztve, míg az SPI oldalról egy Microchip EEPROM funkcionális verilog modellje lett illesztve. A szimuláció egy az EEPROM-ba való írást, majd onnan a beírt adatok kiolvasását valósítja meg.
@@ -115,7 +121,7 @@ A szimuláció 100MHz-s órajelet használ, a reset vonal induláskor 20ns ideig
 Az SPI modul /16 órejelosztást használ, amivel az SCK 6,25 MHz lesz. A SPI megszakítás küldője be lett kapcsolva ugyanis ezt használjuk az SPI tranzakciós ciklus befejeződésének figyelésére. A $\overline{CS}$ jelet manuálisan állítjuk, az SPI megfelelő regiszterébe való írással.
 \subsection{BFM}
 
-A busz funkcionális modell egyszerű verilog taszkokkal lett megvalósítva. Ezek a taszkok az AXI LITE interfészt ismertető részben bemutatott időzítési diagram szerint lettek megírva. A taszkokban az órajel felfutó éle után mindenhol egy 1ns-os késleltetés lett elhelyezve, hogy szimuláljuk a rendszerben a flip-flop-ok set-up és hold késleltetésüket.
+A busz funkcionális modell egyszerű verilog taszkokkal lett megvalósítva. Ezek a taszkok az AXI LITE interfészt ismertető részben bemutatott időzítési diagram szerint lettek megírva. A taszkokban az órajel felfutó éle után mindenhol egy 1ns-os késleltetés lett elhelyezve, hogy szimuláljuk a rendszerben a flip-flop-ok set-up és hold késleltetésüket. Az írási taszk két bemenettel rendelkezik, írási cím és írási adat. Az olvasási taszk egy bemenet és egy kimenettel rendelkezik: az olvasandó adat címe és a beolvasott adat. Verilog taszkok kimenetein szimulációban csak a taszk befejeződését követően jelenik meg az új adat, attól függetlenül hogy a taszkban hol történt ténylegesen a kimeneti regiszter írása.
 
 \subsection{EEPROM}
 Az eszközhöz egy Microchip 25AA010A EEPROM szimulációs verilog modellje van illesztve, hogy a valós működés is tesztelve legyen. Ez a modul egy 1kbit méretű flash EEPROM-ot valósít meg, valós időzítési értékekkel. Az eszköz leírása \href{http://ww1.microchip.com/downloads/en/DeviceDoc/21832H.pdf}{ezen a linken} érhető el.
@@ -166,8 +172,9 @@ Fentebb látható egy AXI olvasási ciklus. Látszik hogy a címet megadva és a
 
 \bibitem{name3}
 
-\textit{}\\
-\url{}
+\textit{EEPROM leírása}\\
+\url{http://ww1.microchip.com/downloads/en/DeviceDoc/21832H.pdf}
+
 \today
 
 \bibitem{name4}
