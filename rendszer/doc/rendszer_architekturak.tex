@@ -17,7 +17,7 @@
     filecolor=magenta,      
     urlcolor=blue,
 }
-
+\usepackage[dvipsnames]{xcolor}
 \usepackage[nottoc,notlot,notlof]{tocbibind}
 \usepackage{graphicx}
 \usepackage{caption}
@@ -105,9 +105,9 @@ Az írási csatornát kezelő logika végzi a bejövő adatok kezelését. Érv�
 
 Az olvasási csatorna végzi a master felől jövő írási kérések kiszolgálását. Az olvasás mindössze két csatornát igényel. Érvényes olvasási handshake után a mintavételezett címnek megfelelő regiszterből megtörténik az adat kiírása a az olvasási válasz státusszal (itt mindig nulla) együtt. A kimenő regiszterek rendre mind wire adattípust használnak, ezek meghajtása vagy egy belső regiszterről történik aminek az értékét valamilyen logika határozza meg, vagy fixen nullára vannak bekötve (mivel 32 bitesek az AXI Lite regiszterek, míg legfeljebb is csak 8 bit van meghajtva egy regiszterben).
 
-A regiszterek funkciójuktól függően különbözően viselkednek. Az I/O regiszter írási oldalról az SPI adatbemenetére kapcsolódik, míg olvasási oldalról az adatkimenetéhez van kötve. Ennek a regiszternek az írása egyben egy új SPI kommunikációt is elindít. Az órajelosztást állító regiszter a beírt értékét adja vissza olvasáskor, illetve közvetlenül csatlakozik az SPI clkdiv bemenetéhez.
+A regiszterek funkciójuktól függően különbözően viselkednek. Az I/O regiszter írási oldalról az SPI adatbemenetére kapcsolódik, míg olvasási oldalról az adatkimenetéhez van kötve. Ennek a regiszternek az írása egyben egy új SPI kommunikációt is elindít. Az órajelosztást állító regiszter a beírt értékét adja vissza olvasáskor, illetve közvetlenül csatlakozik az SPI clkdiv bemenetéhez. Az ITENABLE és TXDONE biteket tartalmazó regiszter ennél összetettebben működik. A TXDONE bit minden írás befejeződésekor magas állapotba kerül. Innen nullázható egy 1-es beírásával, illetve egy új SPI ciklus indításával ami automatikusan nullázza ezt az értéket. A negyedik regiszter a busy és $\overline{CS}$ -t vezérlő biteket tartalmazza, előbbi csak olvasható, utóbbi írható és olvasható is.
 
-Az AXI Lite perifériaillesztőn túl itt van elhelyezve az SPI-t indító logika, illetve a megszakítás generálása. Az SPI indítása egy egyszerű logikai és kapcsolat, ami az I/O regiszterbe történő írást jelző bitet, az SPI használatát jelölő "busy" bit negáltját és CS bit állását fogja össze. Ebből egy egy órajeles start impulzus jön létre ami elindítja az SPI modult. Az interrupt jel haszonló módon, adott bitek megfelelő állása esetén generálódik. Figyelembe veszi hogy aktiváltuk e az SPI TX\textunderscore ENABLE bitjét, és az SPI modul TXDONE kimeneti bitjét figyeli. Ha ez a kettő egyszerre igaz, egy egy órajeles megszakítást generál, jelölve hogy befejeződött az SPI kommunikáció.
+Ezeken túl itt van elhelyezve az SPI-t indító logika, illetve a megszakítás generálása. Az SPI indítása egy egyszerű logikai és kapcsolat, ami az I/O regiszterbe történő írást jelző bitet, az SPI használatát jelölő "busy" bit negáltját és CS bit állását fogja össze. Ebből egy egy órajeles start impulzus jön létre ami elindítja az SPI modult. Az interrupt jel haszonló módon, adott bitek megfelelő állása esetén generálódik. Figyelembe veszi hogy aktiváltuk e az SPI TX\textunderscore ENABLE bitjét, és az SPI modul TXDONE kimeneti bitjét figyeli. Ha ez a kettő egyszerre igaz, egy egy órajeles megszakítást generál, jelölve hogy befejeződött az SPI kommunikáció.
 
 \subsection{SPI modul}
 
@@ -133,18 +133,46 @@ Hogy az eszközt írhassuk, először egy instrukciót kell neki küldeni ami en
 Olvasáshoz nem kell speciális parancsot megadni, elég az olvasás instrukció és olvasandó adat kezdőcíme, majd annyi bájtot tudunk kiolvasni amennyit akarunk, az EEPROM minden bájt után automatikusan növeli a pointer értékét. Olvasásnál nincs 16 bájtos limit, amíg el nem érjük a címtartomány végét, folyamatosan tudunk adatot kiolvasni. Az EEPROM verilog modellje a valóságot szimulálva, ha éppen nem küld adatot a MASTER felé a soros adatkimenet (SO) lábát magas impedanciás módba rakja (ez látható is a szimulációban).
 
 \subsection{Szimuláció eredménye}
-%SIMTOTAL
-Az ábrán látható a teljes szimuláció eredménye. Láthatóak az AXI periféria írások és olvasások, illetve az SPI ciklusok. A beírt 3 adatbájt olvasáskor megjelenik a kimeneten, ebből látható hogy az SPI illesztő és az EEPROM is megfelelően működik. Ezeken felül a Vivado lehetőséget ad hogy a belső regiszterek állását is ellenőrizni lehessen, ha ezt megtesszük látható lesz hogy az EEPROM-nak valóban beíródott a belső regisztereibe az adat.
 
+\begin{figure}[h!]
+	\begin{center}
+	\includegraphics[scale=0.6]{sim_complete.JPG}
+	\label{fig:simtotal}
+	\end{center}
+	\caption{A teljes szimuláció}
+\end{figure}
 
-%SIMAXIWRITE
-Az fenti ábrán látható egy AXI írási ciklus. Látható hogy a cím és adatcsatorna egyszerre működtethető, mindkettő jelzi hogy új adat érkezik, majd vár a slave felől a válasz jelre hogy a handshake megtörténjen és az adat beíródjon a slave eszközbe. Az írásra a slave eszköz a write-response csatornán választ ad a megfelelő hibakóddal (esetünkben csak 0 lehet) és ezzel a master befejezi az írási ciklust. Mivel az AXI Lite nem támogat burst átvitelt így itt minden adatot egy komplett írási ciklussal kell átvinni.
+Az \ref{fig:simtotal} ábrán ábrán látható a teljes szimuláció eredménye. Láthatóak az AXI periféria írások és olvasások, illetve az SPI ciklusok. A beírt 3 adatbájt olvasáskor megjelenik a kimeneten, ebből látható hogy az SPI illesztő és az EEPROM is megfelelően működik. Ezeken felül a Vivado lehetőséget ad hogy a belső regiszterek állását is ellenőrizni lehessen, ha ezt megtesszük látható lesz hogy az EEPROM-nak valóban beíródott a belső regisztereibe az adat.
 
-%SPI
-Maga az SPI működése a fenti ábrán látható. Látszik hogy a feladatban megadott üzemmód szerint felfutó SCK jelre történik az adat mintavételezése, míg lefutó élre az új adat kiküldése. Látszik hogy amíg az EEPROM-nak nem küldünk írási utasítást a kimenete (MISO) magas impedanciás állapotban van. Látható hogy a TXCOMPLETE interrupt minden tranzakció végén egy óralejre megjelenik, ezzel jelezve a ciklus befejeződését. Érdekes megfigyelni hogy mivel az EEPROM valós időzítésekkel szimulál, az új adatot csak az SCK lefutása után jelentős idővel küldi ki.
+\begin{figure}[h!]
+	\begin{center}
+	\includegraphics[scale=0.5]{axi_write.JPG}
+	\label{fig:axiwritesim}
+	\end{center}
+	\caption{AXI írási ciklusok}
+\end{figure}
+A \ref{fig:axiwritesim} ábrán látható egy AXI írási ciklus. Látható hogy a cím és adatcsatorna egyszerre működtethető, mindkettő jelzi hogy új adat érkezik, majd vár a slave felől a válasz jelre hogy a handshake megtörténjen és az adat beíródjon a slave eszközbe. Az írásra a slave eszköz a write-response csatornán választ ad a megfelelő hibakóddal (esetünkben csak 0 lehet) és ezzel a master befejezi az írási ciklust. Mivel az AXI Lite nem támogat burst átvitelt így itt minden adatot egy komplett írási ciklussal kell átvinni.
 
-%AXI READ
-Fentebb látható egy AXI olvasási ciklus. Látszik hogy a címet megadva és a handshake után megjelenik a kiolvasandó adat a megfelelő csatornáján.
+\begin{figure}[h!]
+	\begin{center}
+	\includegraphics[scale=0.7]{SPI.JPG}
+	\label{fig:spisim}
+	\end{center}
+	\caption{SPI kommunikáció}
+\end{figure}
+
+Maga az SPI működése a \ref{fig:spisim} ábrán látható. Látszik hogy a feladatban megadott üzemmód szerint felfutó SCK jelre történik az adat mintavételezése, míg lefutó élre az új adat kiküldése. Látszik hogy amíg az EEPROM-nak nem küldünk írási utasítást a kimenete (MISO) magas impedanciás állapotban van. Látható hogy a TXCOMPLETE interrupt minden tranzakció végén egy óralejre megjelenik, ezzel jelezve a ciklus befejeződését. Érdekes megfigyelni hogy mivel az EEPROM valós időzítésekkel szimulál, az új adatot csak az SCK lefutása után jelentős idővel küldi ki.
+
+\begin{figure}[h!]
+	\begin{center}
+	\includegraphics[scale=0.49]{axi_read.JPG}
+	\label{fig:axireadsim}
+	\end{center}
+	\caption{AXI olvasási ciklusok}
+\end{figure}
+
+A \ref{fig:axireadsim} látható egy AXI olvasási ciklus. Látszik hogy a címet megadva és a handshake után megjelenik a kiolvasandó adat a megfelelő csatornáján.
+
 
 \section{Forráskód}
 
@@ -152,6 +180,14 @@ Fentebb látható egy AXI olvasási ciklus. Látszik hogy a címet megadva és a
 
 \subsection{Szimulációs kód}
 
+\lstinputlisting[
+language=Verilog,
+inputencoding=latin1,
+basicstyle=\fontsize{10}{13}\selectfont\ttfamily,
+keywordstyle=\color{blue}\ttfamily,
+commentstyle=\color{OliveGreen}\ttfamily,
+backgroundcolor = \color{lightgray}
+]{../spi_master/spi_master.srcs/sim_1/new/EEPROM_SPI_TB.v}
 
 \pagebreak
 \begin{thebibliography}{}

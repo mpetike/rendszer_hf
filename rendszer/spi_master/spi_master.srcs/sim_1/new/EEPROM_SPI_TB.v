@@ -1,23 +1,4 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 17.04.2018 18:29:35
-// Design Name: 
-// Module Name: AXI_MASTER_TB
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 
 module EEPROM_SPI_TB(
@@ -139,7 +120,7 @@ module EEPROM_SPI_TB(
         //CS low
         axi_write(12,8'b10);
         //Write data
-        axi_write(0,8'b00000010); wait(TX_DONE_IT);   //Write instruction
+        axi_write(0,8'b00000010); wait(TX_DONE_IT);//Write instruction
         axi_write(0,8'b00000010); wait(TX_DONE_IT);   //ADDRESS
         axi_write(0,8'hAA); wait(TX_DONE_IT);   //DATA
         axi_write(0,8'hBB); wait(TX_DONE_IT);
@@ -148,7 +129,7 @@ module EEPROM_SPI_TB(
         #500;
         //Read data
         axi_write(12,8'b10); //CS low
-        axi_write(0,8'b00000011); wait(TX_DONE_IT);   //Read instruction
+        axi_write(0,8'b00000011); wait(TX_DONE_IT);//Read instruction
         axi_write(0,8'b00000010); wait(TX_DONE_IT);   //ADDRESS
         axi_write(0,8'b0); wait(TX_DONE_IT);  //Start transfer
         axi_read(0,read_data);  //READû
