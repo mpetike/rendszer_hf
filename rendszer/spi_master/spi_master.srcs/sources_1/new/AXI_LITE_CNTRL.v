@@ -18,17 +18,17 @@ module AXI_LITE_CNTRL(
                         output reg  S_AXI_WREADY,   //Ready for write
                         //Write response channel
                         output reg [1:0] S_AXI_BRESP,    //Write response
-                        output reg  S_AXI_BVALID,
-                        input wire  S_AXI_BREADY,
+                        output reg  S_AXI_BVALID,		//	Write response
+                        input wire  S_AXI_BREADY,		//Response ready
                         //Read address channel
-                        input wire [3:0] S_AXI_ARADDR,
-                        input wire  S_AXI_ARVALID,
-                        output reg  S_AXI_ARREADY,
+                        input wire [3:0] S_AXI_ARADDR,	//Read address
+                        input wire  S_AXI_ARVALID,		//Read address valid
+                        output reg  S_AXI_ARREADY,		//Read address ready
                         //Read data channel
-                        output reg [31:0] S_AXI_RDATA,
-                        output reg [1:0] S_AXI_RRESP,
-                        output reg  S_AXI_RVALID,
-                        input wire  S_AXI_RREADY,
+                        output reg [31:0] S_AXI_RDATA,	//Read data
+                        output reg [1:0] S_AXI_RRESP,	//Reade response
+                        output reg  S_AXI_RVALID,		//Read valid
+                        input wire  S_AXI_RREADY,		//Read ready
                         //SPI signals
                         output CS,
                         output MOSI,
@@ -39,6 +39,23 @@ module AXI_LITE_CNTRL(
     );
     
     reg aw_enable = 0;
+	
+	//Write address latching    
+    reg [3:0] axi_waddr = 0;
+    
+    always @ (posedge S_AXI_ACLK)
+    begin
+        if(~S_AXI_ARESETN)
+            begin
+                axi_waddr <= 0;
+            end
+        else
+            begin
+                if(~S_AXI_AWREADY && S_AXI_AWVALID && S_AXI_WVALID && aw_enable)
+                    axi_waddr <= S_AXI_AWADDR;
+            end
+    end	
+	
     //Awready gen
     always @ (posedge S_AXI_ACLK)
     begin
@@ -64,22 +81,6 @@ module AXI_LITE_CNTRL(
             end
     end
     
-    //Write address latching
-    
-    reg [3:0] axi_waddr = 0;
-    
-    always @ (posedge S_AXI_ACLK)
-    begin
-        if(~S_AXI_ARESETN)
-            begin
-                axi_waddr <= 0;
-            end
-        else
-            begin
-                if(~S_AXI_AWREADY && S_AXI_AWVALID && S_AXI_WVALID && aw_enable)
-                    axi_waddr <= S_AXI_AWADDR;
-            end
-    end
     
     //Wready gen    
     always @ (posedge S_AXI_ACLK)

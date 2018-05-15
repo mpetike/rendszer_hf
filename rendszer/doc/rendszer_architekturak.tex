@@ -90,12 +90,22 @@ Méréstechnika és Információs Rendszerek Tanszék\\
 
 \section{Tervezés}
 
+blablabla
+
+majd blokvázlatot ide
+
 \section{Verilog megvalósítás}
 
 \subsection{AXI Lite illesztő}
+Az AXI lite illesztő a Xilinx saját példája alapján lett megírva. Minden csatorna elkülöníthető, a funkciójukat önállóan valósítják meg. Mivel általában az ehhez hasonló rendszerek active-low reset-et használnak, így itt is ez lett alkalmazva. A reset és órajel vonalak minden egységhez csatlakoznak, a reset a rendszer minden elemét egy megadott indítási állapotba hozza.
+
+Mivel regisztereket nem szabad egyszerre több helyről is írni ezért a bemeneti és kimeneti regisztereket el kell különíteni az AXI illesztőn belül. Egyes regiszterek értékét csak az AXI master változtatja, ezeket egyszerűen vissza lehet kötni a kimeneti regiszterekbe, viszont egy csomó regiszter más értéket ad ki olvasáskor mint amit beleírtunk, ezeknek a kezelésére külön logika szükséges.
+
+Az írási csatornát kezelő logika végzi a bejövő adatok kezelését. Érvényes AWVALID jelre, ha éppen nem folyik írás, jelez az AWREADY vonalon hogy képes érvényes cím fogadására és mintavételezi a AWADDR csatornát. Ezután ugyanez a handshake folyamat megy végbe az írási adat csatornán is. Ha mindkét csatornán érvényes volt a tranzakció, megtörténik a tényleges írás a címzett adatregiszter AXI\textunderscore WSTRB által megadott megfelelő bájt vonalaiba. Ezzel együtt történik az írás válasz generálása a saját csatornáján, ami itt mindig nulla: írás OK. Mivel az eszköz úgy lett megtervezve hogy az adat I/O regiszterbe való írás indít egy új SPI tranzakciót, így szükség van arra hogy detektáljuk mikor történik írás a regiszterbe. Erre egy külön reg lett létrehozva ami 1-be állítódik amikor az AXI Lite nullás regiszterébe történik írás, 0-ba ha bármi más történik. Ezzel egy egy órajelű start jelet tudunk létrehozni amit az SPI modulnak továbbítva megtörténhet az írás.
+
+Az olvasási csatorna végzi a master felől jövő írási kérések kiszolgálását. Az olvasás mindössze két csatornát igényel. 
 
 \subsection{SPI modul}
-
 
 \section{Szimuláció}
 A létrehozott periféria működése szimulációval lett ellenőrizve. A szimulációhoz a Vivado beépített szimulátorát használtuk. A perifériához az AXI interfész felől egy AXI-LITE Master-t szimuláló BFM lett illesztve, míg az SPI oldalról egy Microchip EEPROM funkcionális verilog modellje lett illesztve. A szimuláció egy az EEPROM-ba való írást, majd onnan a beírt adatok kiolvasását valósítja meg.
@@ -135,8 +145,6 @@ Fentebb látható egy AXI olvasási ciklus. Látszik hogy a címet megadva és a
 \subsection{SPI és busz illesztő}
 
 \subsection{Szimulációs kód}
-
-\section{}
 
 
 \pagebreak
