@@ -82,11 +82,42 @@ Méréstechnika és Információs Rendszerek Tanszék\\
 
 
 \section{Feladat}
-
+A félév során egy SPI Master periféria Verilog nyelven történő fejlesztése volt a feladat, amely egy AXI Lite perifériabusz vezérlőre került illesztésre. Az így elkészített rendszer működőképessége szimulációval került ellenőrzésre. Szimulációban a perifériabusz vezérlését BFM valósítja meg, ami úgy tesz, mintha AXI Lite Master lenne az AXI Lite időzítési kritériumait figyelembe véve. Az SPI Masterre egy Microchip által fejlesztett EEPROM Verilog modul csatlakozik. A szimuláció az EEPROM-ba történő írást és ennek a beírt adatnak a visszaolvasását valósítja meg.
+\begin{figure}[h!]
+	\begin{center}
+	\includegraphics[scale=0.7]{genbd.png}
+	\caption{A kitűzött feladat blokkdiagramja}
+	\label{fig:genbd}
+	\end{center}
+\end{figure}
 
 \section{AXI Lite}
 
-\section{SPI}
+\section{SPI - Serial Peripheral Interface Bus}
+A Serial Peripheral Interface busz egy szinkron soros interfész, amely elsősorban beágyazott rendszerekben fordul elő, ahol az egymással kommunikálni kívánó eszközök közötti távolság rövid. Az SPI interfész shift regisztereken alapul. A kommunikáció master-slave jellegű, ahol a master vezérli a kommunikációt: szolgáltatja az órajelet, valamint egy külön vezetékkel engedélyezi a hozzákapcsolt slave perifériákat.\\
+Ennek az a hátránya, hogy minden slave perifériához külön kiválasztó vezetéket kell használni. A szükséges I/O lábak csökkentése érdekében használhatunk dekódert. 
+Az SPI busz jelvezetékei:
+\begin{itemize}
+	\item SCLK: órajel, amit a master biztosít,
+	\item MOSI: a master eszköz soros adatkimenete, amely a slave soros adatbemenetére csatlakozik,
+	\item MISO: a master eszköz soros adatbemenete, amely a slave soros adatkimenetére csatlakozik,
+	\item $\overline{CS}$n: slave eszköz kiválasztó jele, ahol n az n-edik eszközhöz tartózó engedélyező jele.
+\end{itemize}
+A kommunikáció megkezdéséhez a master biztosítja az órajelet és logikai 0-ba állítja a megfelelő $\overline{CS}$n slave kiválasztó jelét. A kommunikáció egyszerre kétirányú - vagyis míg a léptetőregiszter bemenetén sorosan fogadja a biteket ugyanakkor a regiszter másik végén kiléptetjük annak előző tartalmát. Ezért például 16 órajellel a master és slave 16 bites shift regisztereinek a tartalma helyet cserél. Az SPI periféria fontos tulajdonsága az órajel élének és polaritásának megválasztása.
+\begin{figure}[h!]
+	\begin{center}
+	\includegraphics[scale=0.7]{SPI_three_slaves.png}
+	\caption{SPI busz: 1 master és 3 független slave eszköz}
+	\label{fig:SPI_three_slaves}
+	\end{center}
+\end{figure}
+\begin{figure}[h!]
+	\begin{center}
+	\includegraphics[scale=2.3]{spi_clkdiag.png}
+	\caption{Az SPI periféria órakonfigurációs beállításai}
+	\label{fig:spi_clkdiag}
+	\end{center}
+\end{figure}
 
 \section{Tervezés}
 
@@ -99,15 +130,15 @@ majd blokvázlatot ide
 \subsection{AXI Lite illesztő}
 Az AXI lite illesztő a Xilinx saját példája alapján lett megírva. Minden csatorna elkülöníthető, a funkciójukat önállóan valósítják meg. Mivel általában az ehhez hasonló rendszerek active-low reset-et használnak, így itt is ez lett alkalmazva. A reset és órajel vonalak minden egységhez csatlakoznak, a reset a rendszer minden elemét egy megadott indítási állapotba hozza.
 
-Mivel regisztereket nem szabad egyszerre több helyről is írni ezért a bemeneti és kimeneti regisztereket el kell különíteni az AXI illesztőn belül. Egyes regiszterek értékét csak az AXI master változtatja, ezeket egyszerűen vissza lehet kötni a kimeneti regiszterekbe, viszont egy csomó regiszter más értéket ad ki olvasáskor mint amit beleírtunk, ezeknek a kezelésére külön logika szükséges.
+Mivel regisztereket nem szabad egyszerre több helyről is írni, ezért a bemeneti és kimeneti regisztereket el kell különíteni az AXI illesztőn belül. Egyes regiszterek értékét csak az AXI master változtatja, ezeket egyszerűen vissza lehet kötni a kimeneti regiszterekbe, viszont egy csomó regiszter más értéket ad ki olvasáskor, mint amit beleírtunk, ezeknek a kezelésére külön logika szükséges.
 
-Az írási csatornát kezelő logika végzi a bejövő adatok kezelését. Érvényes AWVALID jelre, ha éppen nem folyik írás, jelez az AWREADY vonalon hogy képes érvényes cím fogadására és mintavételezi a AWADDR csatornát. Ezután ugyanez a handshake folyamat megy végbe az írási adat csatornán is. Ha mindkét csatornán érvényes volt a tranzakció, megtörténik a tényleges írás a címzett adatregiszter AXI\textunderscore WSTRB által megadott megfelelő bájt vonalaiba. Ezzel együtt történik az írás válasz generálása a saját csatornáján, ami itt mindig nulla: írás OK. Mivel az eszköz úgy lett megtervezve hogy az adat I/O regiszterbe való írás indít egy új SPI tranzakciót, így szükség van arra hogy detektáljuk mikor történik írás a regiszterbe. Erre egy külön reg lett létrehozva ami 1-be állítódik amikor az AXI Lite nullás regiszterébe történik írás, 0-ba ha bármi más történik. Ezzel egy egy órajelű start jelet tudunk létrehozni amit az SPI modulnak továbbítva megtörténhet az írás.
+Az írási csatornát kezelő logika végzi a bejövő adatok kezelését. Érvényes AWVALID jelre, ha éppen nem folyik írás, jelez az AWREADY vonalon hogy képes érvényes cím fogadására és mintavételezi a AWADDR csatornát. Ezután ugyanez a handshake folyamat megy végbe az írási adat csatornán is. Ha mindkét csatornán érvényes volt a tranzakció, megtörténik a tényleges írás a címzett adatregiszter AXI\textunderscore WSTRB által megadott megfelelő bájt vonalaiba. Ezzel együtt történik az írás válasz generálása a saját csatornáján, ami itt mindig nulla: írás OK. Mivel az eszköz úgy lett megtervezve hogy az adat I/O regiszterbe való írás indít egy új SPI tranzakciót, így szükség van arra hogy detektáljuk mikor történik írás a regiszterbe. Erre egy külön regiszter lett létrehozva ami 1-be állítódik amikor az AXI Lite nullás regiszterébe történik írás, 0-ba ha bármi más történik. Ezzel egy egy órajelű start jelet tudunk létrehozni amit az SPI modulnak továbbítva megtörténhet az írás.
 
-Az olvasási csatorna végzi a master felől jövő írási kérések kiszolgálását. Az olvasás mindössze két csatornát igényel. Érvényes olvasási handshake után a mintavételezett címnek megfelelő regiszterből megtörténik az adat kiírása a az olvasási válasz státusszal (itt mindig nulla) együtt. A kimenő regiszterek rendre mind wire adattípust használnak, ezek meghajtása vagy egy belső regiszterről történik aminek az értékét valamilyen logika határozza meg, vagy fixen nullára vannak bekötve (mivel 32 bitesek az AXI Lite regiszterek, míg legfeljebb is csak 8 bit van meghajtva egy regiszterben).
+Az olvasási csatorna végzi a master felől jövő írási kérések kiszolgálását. Az olvasás mindössze két csatornát igényel. Érvényes olvasási handshake után a mintavételezett címnek megfelelő regiszterből megtörténik az adat kiírása az olvasási válasz státusszal (itt mindig nulla) együtt. A kimenő regiszterek rendre mind wire adattípust használnak, ezek meghajtása vagy egy belső regiszterről történik, aminek az értékét valamilyen logika határozza meg, vagy fixen nullára vannak bekötve (mivel 32 bitesek az AXI Lite regiszterek, míg legfeljebb is csak 8 bit van meghajtva egy regiszterben).
 
-A regiszterek funkciójuktól függően különbözően viselkednek. Az I/O regiszter írási oldalról az SPI adatbemenetére kapcsolódik, míg olvasási oldalról az adatkimenetéhez van kötve. Ennek a regiszternek az írása egyben egy új SPI kommunikációt is elindít. Az órajelosztást állító regiszter a beírt értékét adja vissza olvasáskor, illetve közvetlenül csatlakozik az SPI clkdiv bemenetéhez. Az ITENABLE és TXDONE biteket tartalmazó regiszter ennél összetettebben működik. A TXDONE bit minden írás befejeződésekor magas állapotba kerül. Innen nullázható egy 1-es beírásával, illetve egy új SPI ciklus indításával ami automatikusan nullázza ezt az értéket. A negyedik regiszter a busy és $\overline{CS}$ -t vezérlő biteket tartalmazza, előbbi csak olvasható, utóbbi írható és olvasható is.
+A regiszterek funkciójuktól függően különbözően viselkednek. Az I/O regiszter írási oldalról az SPI adatbemenetére kapcsolódik, míg olvasási oldalról az adatkimenetéhez van kötve. Ennek a regiszternek az írása egyben egy új SPI kommunikációt is elindít. Az órajelosztást állító regiszter a beírt értékét adja vissza olvasáskor, illetve közvetlenül csatlakozik az SPI clkdiv bemenetéhez. Az ITENABLE és TXDONE biteket tartalmazó regiszter ennél összetettebben működik. A TXDONE bit minden írás befejeződésekor magas állapotba kerül. Innen nullázható egy 1-es beírásával, illetve egy új SPI ciklus indításával, ami automatikusan nullázza ezt az értéket. A negyedik regiszter a busy és $\overline{CS}$ -t vezérlő biteket tartalmazza, előbbi csak olvasható, utóbbi írható és olvasható is.
 
-Ezeken túl itt van elhelyezve az SPI-t indító logika, illetve a megszakítás generálása. Az SPI indítása egy egyszerű logikai és kapcsolat, ami az I/O regiszterbe történő írást jelző bitet, az SPI használatát jelölő "busy" bit negáltját és CS bit állását fogja össze. Ebből egy egy órajeles start impulzus jön létre ami elindítja az SPI modult. Az interrupt jel haszonló módon, adott bitek megfelelő állása esetén generálódik. Figyelembe veszi hogy aktiváltuk e az SPI TX\textunderscore ENABLE bitjét, és az SPI modul TXDONE kimeneti bitjét figyeli. Ha ez a kettő egyszerre igaz, egy egy órajeles megszakítást generál, jelölve hogy befejeződött az SPI kommunikáció.
+Ezeken túl itt van elhelyezve az SPI-t indító logika, illetve a megszakítás generálása. Az SPI indítása egy egyszerű logikai ÉS kapcsolat, ami az I/O regiszterbe történő írást jelző bitet, az SPI használatát jelölő "busy" bit negáltját és CS bit állását fogja össze. Ebből egy egy órajeles start impulzus jön létre ami elindítja az SPI modult. Az interrupt jel hasonló módon, adott bitek megfelelő állása esetén generálódik. Figyelembe veszi, hogy aktiváltuk e az SPI TX\textunderscore ENABLE bitjét, és az SPI modul TXDONE kimeneti bitjét figyeli. Ha ez a kettő egyszerre igaz, egy egy órajeles megszakítást generál, jelölve, hogy befejeződött az SPI kommunikáció.
 
 \subsection{SPI modul}
 
@@ -137,41 +168,44 @@ Olvasáshoz nem kell speciális parancsot megadni, elég az olvasás instrukció
 \begin{figure}[h!]
 	\begin{center}
 	\includegraphics[scale=0.6]{sim_complete.JPG}
-	\label{fig:simtotal}
-	\end{center}
 	\caption{A teljes szimuláció}
+	\label{fig:sim_complete}
+	\end{center}
 \end{figure}
 
-Az \ref{fig:simtotal} ábrán ábrán látható a teljes szimuláció eredménye. Láthatóak az AXI periféria írások és olvasások, illetve az SPI ciklusok. A beírt 3 adatbájt olvasáskor megjelenik a kimeneten, ebből látható hogy az SPI illesztő és az EEPROM is megfelelően működik. Ezeken felül a Vivado lehetőséget ad hogy a belső regiszterek állását is ellenőrizni lehessen, ha ezt megtesszük látható lesz hogy az EEPROM-nak valóban beíródott a belső regisztereibe az adat.
+Az \ref{fig:sim_complete} ábrán ábrán látható a teljes szimuláció eredménye. Láthatóak az AXI periféria írások és olvasások, illetve az SPI ciklusok. A beírt 3 adatbájt olvasáskor megjelenik a kimeneten, ebből látható hogy az SPI illesztő és az EEPROM is megfelelően működik. Ezeken felül a Vivado lehetőséget ad hogy a belső regiszterek állását is ellenőrizni lehessen, ha ezt megtesszük látható lesz hogy az EEPROM-nak valóban beíródott a belső regisztereibe az adat.
 
 \begin{figure}[h!]
 	\begin{center}
 	\includegraphics[scale=0.5]{axi_write.JPG}
-	\label{fig:axiwritesim}
+	\caption{AXI írási ciklusok}	
+	\label{fig:axi_write}
 	\end{center}
-	\caption{AXI írási ciklusok}
 \end{figure}
-A \ref{fig:axiwritesim} ábrán látható egy AXI írási ciklus. Látható hogy a cím és adatcsatorna egyszerre működtethető, mindkettő jelzi hogy új adat érkezik, majd vár a slave felől a válasz jelre hogy a handshake megtörténjen és az adat beíródjon a slave eszközbe. Az írásra a slave eszköz a write-response csatornán választ ad a megfelelő hibakóddal (esetünkben csak 0 lehet) és ezzel a master befejezi az írási ciklust. Mivel az AXI Lite nem támogat burst átvitelt így itt minden adatot egy komplett írási ciklussal kell átvinni.
+
+A \ref{fig:axi_write} ábrán látható egy AXI írási ciklus. Látható hogy a cím és adatcsatorna egyszerre működtethető, mindkettő jelzi hogy új adat érkezik, majd vár a slave felől a válasz jelre hogy a handshake megtörténjen és az adat beíródjon a slave eszközbe. Az írásra a slave eszköz a write-response csatornán választ ad a megfelelő hibakóddal (esetünkben csak 0 lehet) és ezzel a master befejezi az írási ciklust. Mivel az AXI Lite nem támogat burst átvitelt így itt minden adatot egy komplett írási ciklussal kell átvinni.
 
 \begin{figure}[h!]
 	\begin{center}
 	\includegraphics[scale=0.7]{SPI.JPG}
-	\label{fig:spisim}
-	\end{center}
 	\caption{SPI kommunikáció}
+	\label{fig:SPI}
+	\end{center}
+	
 \end{figure}
 
-Maga az SPI működése a \ref{fig:spisim} ábrán látható. Látszik hogy a feladatban megadott üzemmód szerint felfutó SCK jelre történik az adat mintavételezése, míg lefutó élre az új adat kiküldése. Látszik hogy amíg az EEPROM-nak nem küldünk írási utasítást a kimenete (MISO) magas impedanciás állapotban van. Látható hogy a TXCOMPLETE interrupt minden tranzakció végén egy óralejre megjelenik, ezzel jelezve a ciklus befejeződését. Érdekes megfigyelni hogy mivel az EEPROM valós időzítésekkel szimulál, az új adatot csak az SCK lefutása után jelentős idővel küldi ki.
+Maga az SPI működése a \ref{fig:SPI} ábrán látható. Látszik hogy a feladatban megadott üzemmód szerint felfutó SCK jelre történik az adat mintavételezése, míg lefutó élre az új adat kiküldése. Látszik hogy amíg az EEPROM-nak nem küldünk írási utasítást a kimenete (MISO) magas impedanciás állapotban van. Látható hogy a TXCOMPLETE interrupt minden tranzakció végén egy óralejre megjelenik, ezzel jelezve a ciklus befejeződését. Érdekes megfigyelni hogy mivel az EEPROM valós időzítésekkel szimulál, az új adatot csak az SCK lefutása után jelentős idővel küldi ki.
 
 \begin{figure}[h!]
 	\begin{center}
 	\includegraphics[scale=0.49]{axi_read.JPG}
-	\label{fig:axireadsim}
-	\end{center}
 	\caption{AXI olvasási ciklusok}
+	\label{fig:axi_read}
+	\end{center}
+	
 \end{figure}
 
-A \ref{fig:axireadsim} látható egy AXI olvasási ciklus. Látszik hogy a címet megadva és a handshake után megjelenik a kiolvasandó adat a megfelelő csatornáján.
+A \ref{fig:axi_read} látható egy AXI olvasási ciklus. Látszik hogy a címet megadva és a handshake után megjelenik a kiolvasandó adat a megfelelő csatornáján.
 
 
 \section{Forráskód}
