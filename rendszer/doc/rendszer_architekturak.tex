@@ -94,6 +94,14 @@ blablabla
 
 majd blokvázlatot ide
 
+\begin{figure}[h!]
+	\begin{center}
+	\includegraphics[scale=1]{reg_set.JPG}
+	\label{fig:registers}
+	\end{center}
+	\caption{A periféria regiszterei}
+\end{figure}
+
 \section{Verilog megvalósítás}
 
 \subsection{AXI Lite illesztő}
@@ -111,7 +119,7 @@ Ezeken túl itt van elhelyezve az SPI-t indító logika, illetve a megszakítás
 
 \subsection{SPI modul}
 
-WOO állapotgépek !!!!4444négy
+Az SPI modul két részből áll. Egy órajel osztó számlálóból, illetve az SPI-t vezérlő állapotgépből. Az órajelosztó számláló egy egyszerű 8-bites számláló, aminek a CLKDIV által megadott bitjét csatoljuk ki az SCK órajel megadásához. Ez a számláló nem szabadonfutó, csak SPI kommunikáció indításakor indul el, addig reset állapotban vár.
 
 \section{Szimuláció}
 A létrehozott periféria működése szimulációval lett ellenőrizve. A szimulációhoz a Vivado beépített szimulátorát használtuk. A perifériához az AXI interfész felől egy AXI-LITE Master-t szimuláló BFM lett illesztve, míg az SPI oldalról egy Microchip EEPROM funkcionális verilog modellje lett illesztve. A szimuláció egy az EEPROM-ba való írást, majd onnan a beírt adatok kiolvasását valósítja meg.
@@ -155,10 +163,10 @@ A \ref{fig:axiwritesim} ábrán látható egy AXI írási ciklus. Látható hogy
 
 \begin{figure}[h!]
 	\begin{center}
-	\includegraphics[scale=0.7]{SPI.JPG}
-	\label{fig:spisim}
+	\includegraphics[scale=0.7]{SPI.JPG}	
 	\end{center}
 	\caption{SPI kommunikáció}
+	\label{fig:spisim}
 \end{figure}
 
 Maga az SPI működése a \ref{fig:spisim} ábrán látható. Látszik hogy a feladatban megadott üzemmód szerint felfutó SCK jelre történik az adat mintavételezése, míg lefutó élre az új adat kiküldése. Látszik hogy amíg az EEPROM-nak nem küldünk írási utasítást a kimenete (MISO) magas impedanciás állapotban van. Látható hogy a TXCOMPLETE interrupt minden tranzakció végén egy óralejre megjelenik, ezzel jelezve a ciklus befejeződését. Érdekes megfigyelni hogy mivel az EEPROM valós időzítésekkel szimulál, az új adatot csak az SCK lefutása után jelentős idővel küldi ki.

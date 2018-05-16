@@ -3,7 +3,7 @@
 <!--The data in this file is primarily intended for consumption by Xilinx tools.
 The structure and the elements are likely to change over the next few releases.
 This means code written to parse this file will need to be revisited each subsequent release.-->
-<application name="pa" timeStamp="Tue May  1 20:52:26 2018">
+<application name="pa" timeStamp="Wed May 16 18:46:19 2018">
 <section name="Project Information" visible="false">
 <property name="ProjectID" value="ab8fa045b8c24d64bad8b72ec153340c" type="ProjectID"/>
 <property name="ProjectIteration" value="3" type="ProjectIteration"/>
@@ -17,9 +17,10 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="ImplStrategy" value="Vivado Implementation Defaults" type="ImplStrategy"/>
 </item>
 <item name="Java Command Handlers">
-<property name="AddSources" value="5" type="JavaHandler"/>
+<property name="AddSources" value="6" type="JavaHandler"/>
 <property name="CloseProject" value="1" type="JavaHandler"/>
-<property name="CoreView" value="1" type="JavaHandler"/>
+<property name="CoreView" value="2" type="JavaHandler"/>
+<property name="CustomizeCore" value="1" type="JavaHandler"/>
 <property name="EditPaste" value="1" type="JavaHandler"/>
 <property name="ExportSimulationFile" value="1" type="JavaHandler"/>
 <property name="NewProject" value="1" type="JavaHandler"/>
@@ -39,19 +40,21 @@ This means code written to parse this file will need to be revisited each subseq
 <item name="Gui Resources Info">
 <property name="AbstractSearchablePanel_SHOW_SEARCH" value="2" type="GuiResourceData"/>
 <property name="BaseDialog_CANCEL" value="9" type="GuiResourceData"/>
-<property name="BaseDialog_OK" value="96" type="GuiResourceData"/>
+<property name="BaseDialog_OK" value="100" type="GuiResourceData"/>
 <property name="CmdMsgDialog_MESSAGES" value="1" type="GuiResourceData"/>
 <property name="CmdMsgDialog_OK" value="4" type="GuiResourceData"/>
 <property name="CodeView_TOGGLE_COLUMN_SELECTION_MODE" value="3" type="GuiResourceData"/>
-<property name="CreateSrcFileDialog_FILE_NAME" value="5" type="GuiResourceData"/>
+<property name="CoreTreeTablePanel_CORE_TREE_TABLE" value="2" type="GuiResourceData"/>
+<property name="CreateSrcFileDialog_FILE_NAME" value="7" type="GuiResourceData"/>
 <property name="ExpReportTreePanel_EXP_REPORT_TREE_TABLE" value="6" type="GuiResourceData"/>
-<property name="FileSetPanel_FILE_SET_PANEL_TREE" value="104" type="GuiResourceData"/>
+<property name="FileSetPanel_FILE_SET_PANEL_TREE" value="114" type="GuiResourceData"/>
 <property name="FileSetPanel_MESSAGES" value="1" type="GuiResourceData"/>
-<property name="FlowNavigatorTreePanel_FLOW_NAVIGATOR_TREE" value="112" type="GuiResourceData"/>
+<property name="FlowNavigatorTreePanel_FLOW_NAVIGATOR_TREE" value="113" type="GuiResourceData"/>
 <property name="GettingStartedView_CREATE_NEW_PROJECT" value="1" type="GuiResourceData"/>
 <property name="GraphicalView_ZOOM_FIT" value="38" type="GuiResourceData"/>
 <property name="GraphicalView_ZOOM_IN" value="66" type="GuiResourceData"/>
 <property name="GraphicalView_ZOOM_OUT" value="151" type="GuiResourceData"/>
+<property name="HACGCIPSymbol_SHOW_DISABLED_PORTS" value="5" type="GuiResourceData"/>
 <property name="HPopupTitle_CLOSE" value="1" type="GuiResourceData"/>
 <property name="LanguageTemplatesDialog_TEMPLATES_TREE" value="8" type="GuiResourceData"/>
 <property name="MainMenuMgr_EXPORT" value="2" type="GuiResourceData"/>
@@ -61,7 +64,7 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="MsgTreePanel_MESSAGE_VIEW_TREE" value="10" type="GuiResourceData"/>
 <property name="MsgView_INFORMATION_MESSAGES" value="1" type="GuiResourceData"/>
 <property name="MsgView_WARNING_MESSAGES" value="2" type="GuiResourceData"/>
-<property name="PACommandNames_ADD_SOURCES" value="5" type="GuiResourceData"/>
+<property name="PACommandNames_ADD_SOURCES" value="6" type="GuiResourceData"/>
 <property name="PACommandNames_AUTO_UPDATE_HIER" value="5" type="GuiResourceData"/>
 <property name="PACommandNames_EXPORT_SIMULATION" value="1" type="GuiResourceData"/>
 <property name="PACommandNames_REPORTS_WINDOW" value="1" type="GuiResourceData"/>
@@ -85,14 +88,17 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="RDICommands_WAVEFORM_SAVE_CONFIGURATION" value="1" type="GuiResourceData"/>
 <property name="RDIViews_WAVEFORM_VIEWER" value="104" type="GuiResourceData"/>
 <property name="RunGadget_SHOW_WARNING_AND_ERROR_MESSAGES_IN_MESSAGES" value="1" type="GuiResourceData"/>
+<property name="SimpleOutputProductDialog_GENERATE_OUTPUT_PRODUCTS_IMMEDIATELY" value="1" type="GuiResourceData"/>
+<property name="SimpleOutputProductDialog_OUTPUT_PRODUCT_TREE" value="1" type="GuiResourceData"/>
 <property name="SimulationLiveRunForComp_SPECIFY_TIME_AND_UNITS" value="1" type="GuiResourceData"/>
 <property name="SimulationObjectsPanel_SIMULATION_OBJECTS_TREE_TABLE" value="3" type="GuiResourceData"/>
 <property name="SimulationScopesPanel_SIMULATION_SCOPES_TREE_TABLE" value="2" type="GuiResourceData"/>
-<property name="SrcChooserPanel_ADD_OR_CREATE_SOURCE_FILE" value="5" type="GuiResourceData"/>
-<property name="SrcChooserPanel_CREATE_FILE" value="5" type="GuiResourceData"/>
+<property name="SrcChooserPanel_ADD_OR_CREATE_SOURCE_FILE" value="6" type="GuiResourceData"/>
+<property name="SrcChooserPanel_CREATE_FILE" value="6" type="GuiResourceData"/>
+<property name="SrcChooserTable_SRC_CHOOSER_TABLE" value="1" type="GuiResourceData"/>
 <property name="SrcMenu_IP_HIERARCHY" value="6" type="GuiResourceData"/>
 <property name="StateMonitor_RESET_RUN" value="2" type="GuiResourceData"/>
-<property name="SyntheticaGettingStartedView_RECENT_PROJECTS" value="9" type="GuiResourceData"/>
+<property name="SyntheticaGettingStartedView_RECENT_PROJECTS" value="10" type="GuiResourceData"/>
 <property name="SyntheticaStateMonitor_CANCEL" value="5" type="GuiResourceData"/>
 <property name="TaskBanner_CLOSE" value="40" type="GuiResourceData"/>
 <property name="WaveformAnalogSettingsDialog_HOLD" value="38" type="GuiResourceData"/>
@@ -100,9 +106,9 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="WaveformNameTree_WAVEFORM_NAME_TREE" value="279" type="GuiResourceData"/>
 </item>
 <item name="Other">
-<property name="GuiMode" value="127" type="GuiMode"/>
+<property name="GuiMode" value="137" type="GuiMode"/>
 <property name="BatchMode" value="0" type="BatchMode"/>
-<property name="TclMode" value="110" type="TclMode"/>
+<property name="TclMode" value="119" type="TclMode"/>
 </item>
 </section>
 </application>

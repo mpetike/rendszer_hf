@@ -26,7 +26,6 @@ module SPI_MASTER(  //Clock and reset
     
     always @(posedge clk)
     begin
-        #1; //Debug delay
         if((~rstn)||(~cntr_enable))
             cntr <= 0;
         else
@@ -62,7 +61,6 @@ module SPI_MASTER(  //Clock and reset
             case(state)
                 2'b00:  //Idle state
                     begin
-                        #1; //Debug delay
                         tx_complete <= 0;
                         spi_tick_prev <= 0;
                         tx_count <= 0;
@@ -77,8 +75,7 @@ module SPI_MASTER(  //Clock and reset
                             end
                     end
                 2'b01:  //Transmit state
-                    begin
-                        #1; //Debug delay                        
+                    begin                      
                         //Shift data out falling edge
                         if((spi_tick_prev) && (~spi_tick))
                             begin
@@ -103,7 +100,6 @@ module SPI_MASTER(  //Clock and reset
                     end
                 2'b10:  //TX done state
                     begin
-                        #1; //Debug delay
                         tx_complete <= 1;
                         state <= 2'b00;
                         data_out <= RX_BUFFER;
