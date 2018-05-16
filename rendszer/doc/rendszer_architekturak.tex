@@ -17,6 +17,7 @@
     filecolor=magenta,      
     urlcolor=blue,
 }
+\usepackage{float}
 \usepackage[dvipsnames]{xcolor}
 \usepackage[nottoc,notlot,notlof]{tocbibind}
 \usepackage{graphicx}
@@ -83,7 +84,7 @@ Méréstechnika és Információs Rendszerek Tanszék\\
 
 \section{Feladat}
 A félév során egy SPI Master periféria Verilog nyelven történő fejlesztése volt a feladat, amely egy AXI Lite perifériabusz vezérlőre került illesztésre. Az így elkészített rendszer működőképessége szimulációval került ellenőrzésre. Szimulációban a perifériabusz vezérlését BFM valósítja meg, ami úgy tesz, mintha AXI Lite Master lenne az AXI Lite időzítési kritériumait figyelembe véve. Az SPI Masterre egy Microchip által fejlesztett EEPROM Verilog modul csatlakozik. A szimuláció az EEPROM-ba történő írást és ennek a beírt adatnak a visszaolvasását valósítja meg.
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=0.7]{genbd.png}
 	\caption{A kitűzött feladat blokkdiagramja}
@@ -104,16 +105,16 @@ Az SPI busz jelvezetékei:
 	\item $\overline{CS}$n: slave eszköz kiválasztó jele, ahol n az n-edik eszközhöz tartózó engedélyező jele.
 \end{itemize}
 A kommunikáció megkezdéséhez a master biztosítja az órajelet és logikai 0-ba állítja a megfelelő $\overline{CS}$n slave kiválasztó jelét. A kommunikáció egyszerre kétirányú - vagyis míg a léptetőregiszter bemenetén sorosan fogadja a biteket ugyanakkor a regiszter másik végén kiléptetjük annak előző tartalmát. Ezért például 16 órajellel a master és slave 16 bites shift regisztereinek a tartalma helyet cserél. Az SPI periféria fontos tulajdonsága az órajel élének és polaritásának megválasztása.
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=0.7]{SPI_three_slaves.png}
 	\caption{SPI busz: 1 master és 3 független slave eszköz}
 	\label{fig:SPI_three_slaves}
 	\end{center}
 \end{figure}
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
-	\includegraphics[scale=2.3]{spi_clkdiag.png}
+	\includegraphics[scale=2]{spi_clkdiag.png}
 	\caption{Az SPI periféria órakonfigurációs beállításai}
 	\label{fig:spi_clkdiag}
 	\end{center}
@@ -123,9 +124,15 @@ A kommunikáció megkezdéséhez a master biztosítja az órajelet és logikai 0
 
 blablabla
 
-majd blokvázlatot ide
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.5]{system_blockdesign.png}
+	\label{fig:system_main}
+	\end{center}
+	\caption{Az eszköz blokkdiagramja}
+\end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=1]{reg_set.JPG}
 	\label{fig:registers}
@@ -150,7 +157,18 @@ Ezeken túl itt van elhelyezve az SPI-t indító logika, illetve a megszakítás
 
 \subsection{SPI modul}
 
-Az SPI modul két részből áll. Egy órajel osztó számlálóból, illetve az SPI-t vezérlő állapotgépből. Az órajelosztó számláló egy egyszerű 8-bites számláló, aminek a CLKDIV által megadott bitjét csatoljuk ki az SCK órajel megadásához. Ez a számláló nem szabadonfutó, csak SPI kommunikáció indításakor indul el, addig reset állapotban vár.
+Az SPI modul két részből áll. Egy órajel osztó számlálóból, illetve az SPI-t vezérlő állapotgépből. Az órajelosztó számláló egy egyszerű 8-bites számláló, aminek a CLKDIV által megadott bitjét csatoljuk ki az SCK órajel megadásához. Ez a jel lesz egyben a kimeneti SCK órajel, illetve ezt használja az állapotgép az adat küldés ütemezésére. A számláló nem szabadonfutó, csak SPI kommunikáció indításakor indul el, addig reset állapotban vár, aminek következményében a kimenete, így SCK nulla lesz.
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.6]{spi_statemachine.png}
+	\caption{SPI állapotgépe}
+	\label{fig:spistatemchn}
+	\end{center}
+\end{figure}
+
+
+Az SPI ciklust egy állapotgép kezeli. Induláskor az IDLE, várakozó állapotban van. Ebben az állapotban a kimeneteket nullázva egy START jelre várakozik. Ha ezt a jelet megkapja,a BUSY jelzőbitet magasra húzza, beolvassa a bemeneti adatot és egy shift regiszterbe menti melynek az MSB-je a MOSI kimenetre van kötve, majd az állapotváltozót megváltoztatva a TX/RX állapotba kerül. Ebben az állapotban az órajelosztó számlálóból kapott jelet figyeli. Mivel minden a főórajel felfutó élére történik, így külön logika kell amivel ellenőrizzük hogy a leosztott órajel felfutó vagy lefutó élen van-e. Ezt egy átmeneti tárolóval oldottuk meg. Ezt minden ciklusban frissítjük a leosztott órajel aktuális állapotával és ezt a két régi és új jelet vizsgáljuk hogy eldöntsük, felfutó vagy lefutó órajele van-e az SCK jelnek. Felfutó élen a MOSI bemeneten lévő adatot egy bemeneti shift-regiszterbe mintavételezzük. Lefutó élen a kimeneti shift regiszter shiftelődik eggyel balra, illetve egy számláló inkrementálódik, ami számolja a kiküldött bitek számát. Ha ennek a számlálónak az értéke eléri a 8-at, tehát az utolsó felfutó él után lefut az SCK az állapotgép a TX COMPLETE állapotba vált. Ebben az állapotban a bejövő shiftregiszter értékét átmásolja az adat kimenetre, továbbá a TXDONE jelet magas értékre húzza. Ebből az állapotból mindig az IDLE állapotba kerül a következő órajelciklusban, ahol a TXDONE és BUSY jelek nullára állnak vissza jelezve hogy új küldésre készen áll.
 
 \section{Szimuláció}
 A létrehozott periféria működése szimulációval lett ellenőrizve. A szimulációhoz a Vivado beépített szimulátorát használtuk. A perifériához az AXI interfész felől egy AXI-LITE Master-t szimuláló BFM lett illesztve, míg az SPI oldalról egy Microchip EEPROM funkcionális verilog modellje lett illesztve. A szimuláció egy az EEPROM-ba való írást, majd onnan a beírt adatok kiolvasását valósítja meg.
@@ -173,7 +191,7 @@ Olvasáshoz nem kell speciális parancsot megadni, elég az olvasás instrukció
 
 \subsection{Szimuláció eredménye}
 
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=0.6]{sim_complete.JPG}
 	\caption{A teljes szimuláció}
@@ -181,9 +199,9 @@ Olvasáshoz nem kell speciális parancsot megadni, elég az olvasás instrukció
 	\end{center}
 \end{figure}
 
-Az \ref{fig:sim_complete} ábrán ábrán látható a teljes szimuláció eredménye. Láthatóak az AXI periféria írások és olvasások, illetve az SPI ciklusok. A beírt 3 adatbájt olvasáskor megjelenik a kimeneten, ebből látható hogy az SPI illesztő és az EEPROM is megfelelően működik. Ezeken felül a Vivado lehetőséget ad hogy a belső regiszterek állását is ellenőrizni lehessen, ha ezt megtesszük látható lesz hogy az EEPROM-nak valóban beíródott a belső regisztereibe az adat.
+Az \ref{fig:sim_complete} sorszámú ábrán ábrán látható a teljes szimuláció eredménye. Láthatóak az AXI periféria írások és olvasások, illetve az SPI ciklusok. A beírt 3 adatbájt olvasáskor megjelenik a kimeneten, ebből látható hogy az SPI illesztő és az EEPROM is megfelelően működik. Ezeken felül a Vivado lehetőséget ad hogy a belső regiszterek állását is ellenőrizni lehessen, ha ezt megtesszük látható lesz hogy az EEPROM-nak valóban beíródott a belső regisztereibe az adat.
 
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=0.5]{axi_write.JPG}
 	\caption{AXI írási ciklusok}	
@@ -191,27 +209,19 @@ Az \ref{fig:sim_complete} ábrán ábrán látható a teljes szimuláció eredm�
 	\end{center}
 \end{figure}
 
-A \ref{fig:axi_write} ábrán látható egy AXI írási ciklus. Látható hogy a cím és adatcsatorna egyszerre működtethető, mindkettő jelzi hogy új adat érkezik, majd vár a slave felől a válasz jelre hogy a handshake megtörténjen és az adat beíródjon a slave eszközbe. Az írásra a slave eszköz a write-response csatornán választ ad a megfelelő hibakóddal (esetünkben csak 0 lehet) és ezzel a master befejezi az írási ciklust. Mivel az AXI Lite nem támogat burst átvitelt így itt minden adatot egy komplett írási ciklussal kell átvinni.
+A \ref{fig:axi_write} sorszámú ábrán látható egy AXI írási ciklus. Látható hogy a cím és adatcsatorna egyszerre működtethető, mindkettő jelzi hogy új adat érkezik, majd vár a slave felől a válasz jelre hogy a handshake megtörténjen és az adat beíródjon a slave eszközbe. Az írásra a slave eszköz a write-response csatornán választ ad a megfelelő hibakóddal (esetünkben csak 0 lehet) és ezzel a master befejezi az írási ciklust. Mivel az AXI Lite nem támogat burst átvitelt így itt minden adatot egy komplett írási ciklussal kell átvinni.
 
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
-<<<<<<< HEAD
 	\includegraphics[scale=0.7]{SPI.JPG}	
 	\end{center}
 	\caption{SPI kommunikáció}
 	\label{fig:spisim}
-=======
-	\includegraphics[scale=0.7]{SPI.JPG}
-	\caption{SPI kommunikáció}
-	\label{fig:SPI}
-	\end{center}
-	
->>>>>>> 822de64fba0c34dec7021ea7c71d794f208cd3a6
 \end{figure}
 
-Maga az SPI működése a \ref{fig:SPI} ábrán látható. Látszik hogy a feladatban megadott üzemmód szerint felfutó SCK jelre történik az adat mintavételezése, míg lefutó élre az új adat kiküldése. Látszik hogy amíg az EEPROM-nak nem küldünk írási utasítást a kimenete (MISO) magas impedanciás állapotban van. Látható hogy a TXCOMPLETE interrupt minden tranzakció végén egy óralejre megjelenik, ezzel jelezve a ciklus befejeződését. Érdekes megfigyelni hogy mivel az EEPROM valós időzítésekkel szimulál, az új adatot csak az SCK lefutása után jelentős idővel küldi ki.
+Maga az SPI működése a \ref{fig:SPI} sorszámú ábrán látható. Látszik hogy a feladatban megadott üzemmód szerint felfutó SCK jelre történik az adat mintavételezése, míg lefutó élre az új adat kiküldése. Látszik hogy amíg az EEPROM-nak nem küldünk írási utasítást a kimenete (MISO) magas impedanciás állapotban van. Látható hogy a TXCOMPLETE interrupt minden tranzakció végén egy óralejre megjelenik, ezzel jelezve a ciklus befejeződését. Érdekes megfigyelni hogy mivel az EEPROM valós időzítésekkel szimulál, az új adatot csak az SCK lefutása után jelentős idővel küldi ki.
 
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=0.49]{axi_read.JPG}
 	\caption{AXI olvasási ciklusok}
@@ -221,7 +231,6 @@ Maga az SPI működése a \ref{fig:SPI} ábrán látható. Látszik hogy a felad
 \end{figure}
 
 A \ref{fig:axi_read} látható egy AXI olvasási ciklus. Látszik hogy a címet megadva és a handshake után megjelenik a kiolvasandó adat a megfelelő csatornáján.
-
 
 \section{Forráskód}
 
