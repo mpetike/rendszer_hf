@@ -176,14 +176,34 @@ A \ref{fig:axireadsim} látható egy AXI olvasási ciklus. Látszik hogy a címe
 
 \section{Forráskód}
 
-\subsection{SPI és busz illesztő}
+\subsection{SPI}
+
+\lstinputlisting[
+language=Verilog,
+inputencoding=latin1,
+basicstyle=\fontsize{7}{13}\selectfont\ttfamily,
+keywordstyle=\color{blue}\ttfamily,
+commentstyle=\color{OliveGreen}\ttfamily,
+backgroundcolor = \color{lightgray}
+]{../spi_master/spi_master.srcs/sources_1/new/SPI_MASTER.v}
+
+\subsection{Busz illesztő}
+
+\lstinputlisting[
+language=Verilog,
+inputencoding=latin1,
+basicstyle=\fontsize{7}{13}\selectfont\ttfamily,
+keywordstyle=\color{blue}\ttfamily,
+commentstyle=\color{OliveGreen}\ttfamily,
+backgroundcolor = \color{lightgray}
+]{../spi_master/spi_master.srcs/sources_1/new/AXI_LITE_CNTRL.v}
 
 \subsection{Szimulációs kód}
 
 \lstinputlisting[
 language=Verilog,
 inputencoding=latin1,
-basicstyle=\fontsize{10}{13}\selectfont\ttfamily,
+basicstyle=\fontsize{7}{13}\selectfont\ttfamily,
 keywordstyle=\color{blue}\ttfamily,
 commentstyle=\color{OliveGreen}\ttfamily,
 backgroundcolor = \color{lightgray}
