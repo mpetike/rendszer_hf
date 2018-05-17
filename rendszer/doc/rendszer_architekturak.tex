@@ -83,7 +83,7 @@ Méréstechnika és Információs Rendszerek Tanszék\\
 
 
 \section{Feladat}
-A félév során egy SPI Master periféria Verilog nyelven történő fejlesztése volt a feladat, amely egy AXI Lite perifériabusz vezérlőre került illesztésre. Az SPI-nak csak master módban kell működnie, CPOL=0 és CPHA=0 üzemmódban. Az SCK-nak változtathatónak kell lennie. Rendelkeznie kell ki-be kapcsolható megszakítással, és a transzfert az adat bemenetre való írásnak kell indítania. Az így elkészített rendszer működőképessége szimulációval került ellenőrzésre. Szimulációban a perifériabusz vezérlését BFM valósítja meg, ami úgy tesz, mintha AXI Lite Master lenne az AXI Lite időzítési kritériumait figyelembe véve. Az SPI Masterre egy Microchip által fejlesztett EEPROM Verilog modul csatlakozik. A szimuláció az EEPROM-ba történő írást és ennek a beírt adatnak a visszaolvasását valósítja meg.
+A félév során egy SPI Master periféria Verilog nyelven történő fejlesztése volt a feladat, amely egy AXI Lite perifériabusz vezérlőre került illesztésre. Az így elkészített rendszer működőképessége szimulációval került ellenőrzésre. Szimulációban a perifériabusz vezérlését BFM valósítja meg, ami úgy tesz, mintha AXI Lite Master lenne az AXI Lite időzítési kritériumait figyelembe véve. Az SPI Masterre egy Microchip által fejlesztett EEPROM Verilog modul csatlakozik. A szimuláció az EEPROM-ba történő írást és ennek a beírt adatnak a visszaolvasását valósítja meg.
 \begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=0.7]{genbd.png}
@@ -93,6 +93,43 @@ A félév során egy SPI Master periféria Verilog nyelven történő fejleszté
 \end{figure}
 
 \section{AXI Lite}
+Az AXI (Advanced eXtensible Interface) - az AMBA specifikáció része, amely interfészt számos SoC gyártó alkalmazza rendszereiben manapság. A protokoll egyszerű szabályokat fektet le annak érdekében, hogy a chipen található modulok hogyan kommunikáljanak egymással handshake jellegű folyamattal kezdve minden tranzakciót. A protokoll egyszerű, összegezve a legfontosabb jellemzői:
+\begin{itemize}
+	\item bármely vezérlő jel/cím/adat átvitele előtt a master és a slave között handshake folyamat zajlik le, amelyre a valid és a ready jelek szolgálnak,
+	\item különböző fázisban kerül átvitelre a vezérlő jel/cím és adat,
+	\item külön csatornák állnak rendelkezésre a vezérlő jel/cím és adat átvitelére,
+	\item burst-jellegű kommunikáció biztosítja a folyamatos adattranszfert.
+\end{itemize}
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.3]{axi_teo.png}
+	\caption{A master és slave eszköz csatorna összeköttetései}
+	\label{fig:axi_teo}
+	\end{center}
+\end{figure}
+Az interfész először a master és a slave eszköz között kapcsolatot létesít. A két eszközt 5 külön csatorna köti össze:
+\begin{itemize}
+	\item Read Address
+	\item Write Address
+	\item Read Data
+	\item Write Data
+	\item Write Response
+\end{itemize}
+A valid és ready jelek mindegyik csatornán megvannak így biztosítva a handshake-et. Bármely jeltovábbítása esetén a forrás csatorna aktív valid jelet szolgáltat, amelyre a cél csatorna aktív ready-vel válaszol. Amennyiben mindkét jel aktív, úgy megkezdődhet a kommunikáció. A vezérlő jele/címek és adatok külön fázisokban kerülnek átvitelre, így fontos, hogy megtörténjen a címzés még az adattranszfert megelőző handshake előtt a két eszköz között.
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=1.6]{axi_single_read.png}
+	\caption{AXI4-Lite Single Read működés}
+	\label{fig:axi_single_read}
+	\end{center}
+\end{figure}
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=1.6]{axi_single_write.png}
+	\caption{AXI4-Lite Single Write működés}
+	\label{fig:axi_single_write}
+	\end{center}
+\end{figure}
 
 \section{SPI - Serial Peripheral Interface Bus}
 A Serial Peripheral Interface busz egy szinkron soros interfész, amely elsősorban beágyazott rendszerekben fordul elő, ahol az egymással kommunikálni kívánó eszközök közötti távolság rövid. Az SPI interfész shift regisztereken alapul. A kommunikáció master-slave jellegű, ahol a master vezérli a kommunikációt: szolgáltatja az órajelet, valamint egy külön vezetékkel engedélyezi a hozzákapcsolt slave perifériákat.\\
@@ -121,7 +158,8 @@ A kommunikáció megkezdéséhez a master biztosítja az órajelet és logikai 0
 \end{figure}
 
 \section{Tervezés}
-Az eszköz két elkülöníthető részből fog állni. Egy AXI Lite 32-bites illesztőből, és magából az SPI kommunikációt lebonyolító master modulból. Mivel az eszköz az AXI Lite interfészen keresztül mint egy memory-mapped eszköz jelenik meg, így az eszköz I/O regisztereken keresztül lesz konfigurálható. Szükség van így egy AXI Lite slave eszközre ami kellő mennyiségű regisztert illeszt az AXI buszra. Az SPI modulban kell egy eszköz ami megvalósítja a kommunikációt, illetve kell egy külön órajelosztó, ami a számunkra szükséges SCK órajelet állítja elő. Mindezen felül az AXI illesztő és SPI modul közé szükséges további logika ami elvéhez olyan funkciókat mint pl. az interrupt generálása, SPI START jel generálása.
+
+blablabla
 
 \begin{figure}[H]
 	\begin{center}
@@ -131,14 +169,12 @@ Az eszköz két elkülöníthető részből fog állni. Egy AXI Lite 32-bites il
 	\caption{Az eszköz blokkdiagramja}
 \end{figure}
 
-Az eszköz regisztereken keresztül lesz konfigurálható. Szükség van egy adat be és kimeneti regiszterre, ami úgy legyen megvalósítva hogy íráskor egy új transzfert indít el automatikusan. Szükség van továbbá egy regiszterre amiben megadhatjuk hogy az SCK a rendszer órajelének hányadrészére legyen osztva. Sok mikrovezérlőhöz hasonlóan, és a kivitelezés egyszerűsítése érdekében ez az osztás kettő hatványa lehet csak. A regiszter 3 bites, így az elérhető osztás 2-től 256-ig állítható, ami 100MHz-nél 50Mhz - ~390kHz tartományt jelent. Szükség van továbbá egy regiszterre ami tartalmaz egy jelző bitet ami az SPI ciklus befejeződését jelzi, illetve egy bitre amivel a megszakítást lehet ki-be kapcsolni. Szükség van további két bitre, egyre amivel a $\overline{CS}$ kimenetet lehet vezérelni, illetve egy státuszbitre ami megmutatja hogy jelenleg épp folyamatban van-e egy küldés/fogadás. Az alábbi (\ref{fig:registers}. ábrán) látható a tervezett regiszterkészlet.
-
 \begin{figure}[H]
 	\begin{center}
-	\includegraphics[scale=1]{reg_set.JPG}	
+	\includegraphics[scale=1]{reg_set.JPG}
+	\label{fig:registers}
 	\end{center}
 	\caption{A periféria regiszterei}
-	\label{fig:registers}
 \end{figure}
 
 \section{Verilog megvalósítás}
@@ -200,7 +236,7 @@ Olvasáshoz nem kell speciális parancsot megadni, elég az olvasás instrukció
 	\end{center}
 \end{figure}
 
-A \ref{fig:sim_complete}. ábrán ábrán látható a teljes szimuláció eredménye. Láthatóak az AXI periféria írások és olvasások, illetve az SPI ciklusok. A beírt 3 adatbájt olvasáskor megjelenik a kimeneten, ebből látható hogy az SPI illesztő és az EEPROM is megfelelően működik. Ezeken felül a Vivado lehetőséget ad hogy a belső regiszterek állását is ellenőrizni lehessen, ha ezt megtesszük látható lesz hogy az EEPROM-nak valóban beíródott a belső regisztereibe az adat.
+Az \ref{fig:sim_complete} sorszámú ábrán látható a teljes szimuláció eredménye. Láthatóak az AXI periféria írások és olvasások, illetve az SPI ciklusok. A beírt 3 adatbájt olvasáskor megjelenik a kimeneten, ebből látható hogy az SPI illesztő és az EEPROM is megfelelően működik. Ezeken felül a Vivado lehetőséget ad hogy a belső regiszterek állását is ellenőrizni lehessen, ha ezt megtesszük látható lesz hogy az EEPROM-nak valóban beíródott a belső regisztereibe az adat.
 
 \begin{figure}[H]
 	\begin{center}
@@ -210,7 +246,7 @@ A \ref{fig:sim_complete}. ábrán ábrán látható a teljes szimuláció eredm�
 	\end{center}
 \end{figure}
 
-A \ref{fig:axi_write}. ábrán látható egy AXI írási ciklus. Látható hogy a cím és adatcsatorna egyszerre működtethető, mindkettő jelzi hogy új adat érkezik, majd vár a slave felől a válasz jelre hogy a handshake megtörténjen és az adat beíródjon a slave eszközbe. Az írásra a slave eszköz a write-response csatornán választ ad a megfelelő hibakóddal (esetünkben csak 0 lehet) és ezzel a master befejezi az írási ciklust. Mivel az AXI Lite nem támogat burst átvitelt így itt minden adatot egy komplett írási ciklussal kell átvinni.
+A \ref{fig:axi_write} sorszámú ábrán látható egy AXI írási ciklus. Látható hogy a cím és adatcsatorna egyszerre működtethető, mindkettő jelzi hogy új adat érkezik, majd vár a slave felől a válasz jelre hogy a handshake megtörténjen és az adat beíródjon a slave eszközbe. Az írásra a slave eszköz a write-response csatornán választ ad a megfelelő hibakóddal (esetünkben csak 0 lehet) és ezzel a master befejezi az írási ciklust. Mivel az AXI Lite nem támogat burst átvitelt így itt minden adatot egy komplett írási ciklussal kell átvinni.
 
 \begin{figure}[H]
 	\begin{center}
@@ -220,18 +256,18 @@ A \ref{fig:axi_write}. ábrán látható egy AXI írási ciklus. Látható hogy 
 	\label{fig:spisim}
 \end{figure}
 
-Maga az SPI működése a \ref{fig:spisim}. ábrán látható. Látszik hogy a feladatban megadott üzemmód szerint felfutó SCK jelre történik az adat mintavételezése, míg lefutó élre az új adat kiküldése. Látszik hogy amíg az EEPROM-nak nem küldünk írási utasítást a kimenete (MISO) magas impedanciás állapotban van. Látható hogy a TXCOMPLETE interrupt minden tranzakció végén egy óralejre megjelenik, ezzel jelezve a ciklus befejeződését. Érdekes megfigyelni hogy mivel az EEPROM valós időzítésekkel szimulál, az új adatot csak az SCK lefutása után jelentős idővel küldi ki.
+Maga az SPI működése a \ref{fig:SPI} sorszámú ábrán látható. Látszik hogy a feladatban megadott üzemmód szerint felfutó SCK jelre történik az adat mintavételezése, míg lefutó élre az új adat kiküldése. Látszik hogy amíg az EEPROM-nak nem küldünk írási utasítást a kimenete (MISO) magas impedanciás állapotban van. Látható hogy a TXCOMPLETE interrupt minden tranzakció végén egy óralejre megjelenik, ezzel jelezve a ciklus befejeződését. Érdekes megfigyelni hogy mivel az EEPROM valós időzítésekkel szimulál, az új adatot csak az SCK lefutása után jelentős idővel küldi ki.
 
 \begin{figure}[H]
 	\begin{center}
 	\includegraphics[scale=0.49]{axi_read.JPG}
-	\caption{AXI olvasási és írási ciklus}
+	\caption{AXI olvasási ciklusok}
 	\label{fig:axi_read}
 	\end{center}
 	
 \end{figure}
 
-A \ref{fig:axi_read}. ábrán látható egy AXI olvasási ciklus. Látszik hogy a címet megadva és a handshake után megjelenik a kiolvasandó adat a megfelelő csatornáján.
+A \ref{fig:axi_read} látható egy AXI olvasási ciklus. Látszik hogy a címet megadva és a handshake után megjelenik a kiolvasandó adat a megfelelő csatornáján.
 
 \section{Forráskód}
 
