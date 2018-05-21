@@ -18,7 +18,7 @@ module DDS(     //Reset,clock
                 output [23:0] nco_dith,
                 output [11:0] rnd
     );
-
+    
     //NCO    
     reg [23:0] nco_cnt = 0;
     

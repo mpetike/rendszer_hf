@@ -47,11 +47,12 @@ reg  [23:0] shr_tx;
 
 begin
 
-assign codec_m0      = 1'b1;
-assign codec_m1      = 1'b1;
+//Config : single-speed MCLK/SCLK 256
+assign codec_m0      = 1'b0;
+assign codec_m1      = 1'b0;
 assign codec_i2s     = 1'b0;
-assign codec_mdiv1   = 1'b1;
-assign codec_mdiv2   = 1'b1;
+assign codec_mdiv1   = 1'b0;
+assign codec_mdiv2   = 1'b0;
 
 always @ (posedge clk)
 if (rst==1)
@@ -63,15 +64,15 @@ assign codec_lrclk  = div_cntr[8];
 assign codec_sclk   = div_cntr[2];
 assign codec_mclk   = div_cntr[0];
 
-assign sclk_fall    = (div_cntr[3:0]==3'b111);
-assign sclk_rise    = (div_cntr[3:0]==3'b011);
+assign sclk_fall    = (div_cntr[2:0]==3'b111);
+assign sclk_rise    = (div_cntr[2:0]==3'b011);
 
 assign bit_cntr     = div_cntr[7:3];
 
 always @ (posedge clk)
 if (rst==1)
    rst_ff <= 1'b0;
-else if (div_cntr[20:10]==7)
+else if (div_cntr[19:9]==7)
    rst_ff <= 1'b1;
       
 assign codec_rstn = rst_ff;

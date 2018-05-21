@@ -2,11 +2,11 @@
 # Vivado v2017.2 (64-bit)
 # SW Build 1909853 on Thu Jun 15 18:39:09 MDT 2017
 # IP Build 1909766 on Thu Jun 15 19:58:00 MDT 2017
-# Start of session at: Tue Apr 24 23:03:53 2018
-# Process ID: 4964
+# Start of session at: Mon May 21 16:03:46 2018
+# Process ID: 6532
 # Current directory: C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/logterv/DDS/DDS.runs/synth_1
-# Command line: vivado.exe -log DDS_top.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source DDS_top.tcl
-# Log file: C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/logterv/DDS/DDS.runs/synth_1/DDS_top.vds
+# Command line: vivado.exe -log DDS_tl.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source DDS_tl.tcl
+# Log file: C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/logterv/DDS/DDS.runs/synth_1/DDS_tl.vds
 # Journal file: C:/Users/Peti/Documents/VIK_MSc/rendszer/rendszer_hf/logterv/DDS/DDS.runs/synth_1\vivado.jou
 #-----------------------------------------------------------
-source DDS_top.tcl -notrace
+source DDS_tl.tcl -notrace

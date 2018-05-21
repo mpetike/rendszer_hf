@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Product Version: Vivado v2017.2 (64-bit)                     -->
+<!--                                                              -->
+<!-- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.        -->
+
+<hwsession version="1" minor="2">
+  <device name="xc7k70t_0" gui_info=""/>
+  <ObjectList object_type="hw_device" gui_info="">
+    <Object name="xc7k70t_0" gui_info="">
+      <Properties Property="FULL_PROBES.FILE" value="$_project_name_.runs/impl_1/$_project_name__tl.ltx"/>
+      <Properties Property="PROBES.FILE" value="$_project_name_.runs/impl_1/$_project_name__tl.ltx"/>
+      <Properties Property="PROGRAM.HW_BITSTREAM" value="$_project_name_.runs/impl_1/$_project_name__tl.bit"/>
+    </Object>
+  </ObjectList>
+  <ObjectList object_type="hw_probe" gui_info="">
+    <Object name="cntrl_word[23:0]" gui_info="hw_vios/hw_vio_1=0"/>
+    <Object name="gain_set[14:0]" gui_info="hw_vios/hw_vio_1=1"/>
+    <Object name="signal_sel[1:0]" gui_info="hw_vios/hw_vio_1=2"/>
+  </ObjectList>
+  <probeset name="hw project" active="false">
+    <probe type="vio_output" busType="bus" source="netlist" spec="VIO_OUTPUT_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="DISPLAY_HINT" value=""/>
+        <Option Id="DISPLAY_VISIBILITY" value=""/>
+        <Option Id="HW_VIO" value="hw_vio_1"/>
+        <Option Id="NAME.CUSTOM" value=""/>
+        <Option Id="NAME.SELECT" value="Long"/>
+        <Option Id="OUTPUT_VALUE" value="42"/>
+        <Option Id="OUTPUT_VALUE_RADIX" value="UNSIGNED"/>
+        <Option Id="SOURCE" value="netlist"/>
+      </probeOptions>
+      <nets>
+        <net name="cntrl_word[23]"/>
+        <net name="cntrl_word[22]"/>
+        <net name="cntrl_word[21]"/>
+        <net name="cntrl_word[20]"/>
+        <net name="cntrl_word[19]"/>
+        <net name="cntrl_word[18]"/>
+        <net name="cntrl_word[17]"/>
+        <net name="cntrl_word[16]"/>
+        <net name="cntrl_word[15]"/>
+        <net name="cntrl_word[14]"/>
+        <net name="cntrl_word[13]"/>
+        <net name="cntrl_word[12]"/>
+        <net name="cntrl_word[11]"/>
+        <net name="cntrl_word[10]"/>
+        <net name="cntrl_word[9]"/>
+        <net name="cntrl_word[8]"/>
+        <net name="cntrl_word[7]"/>
+        <net name="cntrl_word[6]"/>
+        <net name="cntrl_word[5]"/>
+        <net name="cntrl_word[4]"/>
+        <net name="cntrl_word[3]"/>
+        <net name="cntrl_word[2]"/>
+        <net name="cntrl_word[1]"/>
+        <net name="cntrl_word[0]"/>
+      </nets>
+    </probe>
+    <probe type="vio_output" busType="bus" source="netlist" spec="VIO_OUTPUT_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="DISPLAY_HINT" value=""/>
+        <Option Id="DISPLAY_VISIBILITY" value=""/>
+        <Option Id="HW_VIO" value="hw_vio_1"/>
+        <Option Id="NAME.CUSTOM" value=""/>
+        <Option Id="NAME.SELECT" value="Long"/>
+        <Option Id="OUTPUT_VALUE" value="4000"/>
+        <Option Id="OUTPUT_VALUE_RADIX" value="HEX"/>
+        <Option Id="SOURCE" value="netlist"/>
+      </probeOptions>
+      <nets>
+        <net name="gain_set[14]"/>
+        <net name="gain_set[13]"/>
+        <net name="gain_set[12]"/>
+        <net name="gain_set[11]"/>
+        <net name="gain_set[10]"/>
+        <net name="gain_set[9]"/>
+        <net name="gain_set[8]"/>
+        <net name="gain_set[7]"/>
+        <net name="gain_set[6]"/>
+        <net name="gain_set[5]"/>
+        <net name="gain_set[4]"/>
+        <net name="gain_set[3]"/>
+        <net name="gain_set[2]"/>
+        <net name="gain_set[1]"/>
+        <net name="gain_set[0]"/>
+      </nets>
+    </probe>
+    <probe type="vio_output" busType="bus" source="netlist" spec="VIO_OUTPUT_V2_RT">
+      <probeOptions Id="DebugProbeParams">
+        <Option Id="DISPLAY_HINT" value=""/>
+        <Option Id="DISPLAY_VISIBILITY" value=""/>
+        <Option Id="HW_VIO" value="hw_vio_1"/>
+        <Option Id="NAME.CUSTOM" value=""/>
+        <Option Id="NAME.SELECT" value="Long"/>
+        <Option Id="OUTPUT_VALUE" value="1"/>
+        <Option Id="OUTPUT_VALUE_RADIX" value="HEX"/>
+        <Option Id="SOURCE" value="netlist"/>
+      </probeOptions>
+      <nets>
+        <net name="signal_sel[1]"/>
+        <net name="signal_sel[0]"/>
+      </nets>
+    </probe>
+  </probeset>
+</hwsession>

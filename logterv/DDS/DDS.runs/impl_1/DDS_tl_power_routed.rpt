@@ -1,0 +1,248 @@
+Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version     : Vivado v.2017.2 (win64) Build 1909853 Thu Jun 15 18:39:09 MDT 2017
+| Date             : Mon May 21 16:06:27 2018
+| Host             : Peti-PC running 64-bit major release  (build 9200)
+| Command          : report_power -file DDS_tl_power_routed.rpt -pb DDS_tl_power_summary_routed.pb -rpx DDS_tl_power_routed.rpx
+| Design           : DDS_tl
+| Device           : xc7k70tfbg676-1
+| Design State     : routed
+| Grade            : commercial
+| Process          : typical
+| Characterization : Production
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Power Report
+
+Table of Contents
+-----------------
+1. Summary
+1.1 On-Chip Components
+1.2 Power Supply Summary
+1.3 Confidence Level
+2. Settings
+2.1 Environment
+2.2 Clock Constraints
+3. Detailed Reports
+3.1 By Hierarchy
+
+1. Summary
+----------
+
++--------------------------+--------+
+| Total On-Chip Power (W)  | 0.191  |
+| Dynamic (W)              | 0.108  |
+| Device Static (W)        | 0.083  |
+| Effective TJA (C/W)      | 1.9    |
+| Max Ambient (C)          | 84.6   |
+| Junction Temperature (C) | 25.4   |
+| Confidence Level         | Medium |
+| Setting File             | ---    |
+| Simulation Activity File | ---    |
+| Design Nets Matched      | NA     |
++--------------------------+--------+
+
+
+1.1 On-Chip Components
+----------------------
+
++--------------------------+-----------+----------+-----------+-----------------+
+| On-Chip                  | Power (W) | Used     | Available | Utilization (%) |
++--------------------------+-----------+----------+-----------+-----------------+
+| Clocks                   |     0.002 |        6 |       --- |             --- |
+| Slice Logic              |     0.001 |     2180 |       --- |             --- |
+|   LUT as Logic           |     0.001 |      713 |     41000 |            1.74 |
+|   Register               |    <0.001 |     1143 |     82000 |            1.39 |
+|   CARRY4                 |    <0.001 |       47 |     10250 |            0.46 |
+|   LUT as Distributed RAM |    <0.001 |       24 |     13400 |            0.18 |
+|   Others                 |     0.000 |      108 |       --- |             --- |
+|   F7/F8 Muxes            |     0.000 |        1 |     41000 |           <0.01 |
+| Signals                  |     0.001 |     1603 |       --- |             --- |
+| Block RAM                |    <0.001 |        1 |       135 |            0.74 |
+| PLL                      |     0.098 |        1 |         6 |           16.67 |
+| DSPs                     |    <0.001 |        1 |       240 |            0.42 |
+| I/O                      |     0.003 |       16 |       300 |            5.33 |
+| Static Power             |     0.083 |          |           |                 |
+| Total                    |     0.191 |          |           |                 |
++--------------------------+-----------+----------+-----------+-----------------+
+
+
+1.2 Power Supply Summary
+------------------------
+
++-----------+-------------+-----------+-------------+------------+
+| Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) |
++-----------+-------------+-----------+-------------+------------+
+| Vccint    |       1.000 |     0.037 |       0.015 |      0.022 |
+| Vccaux    |       1.800 |     0.062 |       0.050 |      0.012 |
+| Vcco33    |       3.300 |     0.002 |       0.001 |      0.001 |
+| Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |
+| Vcco18    |       1.800 |     0.000 |       0.000 |      0.000 |
+| Vcco15    |       1.500 |     0.000 |       0.000 |      0.000 |
+| Vcco135   |       1.350 |     0.000 |       0.000 |      0.000 |
+| Vcco12    |       1.200 |     0.000 |       0.000 |      0.000 |
+| Vccaux_io |       1.800 |     0.000 |       0.000 |      0.000 |
+| Vccbram   |       1.000 |     0.000 |       0.000 |      0.000 |
+| MGTAVcc   |       1.000 |     0.000 |       0.000 |      0.000 |
+| MGTAVtt   |       1.200 |     0.000 |       0.000 |      0.000 |
+| MGTVccaux |       1.800 |     0.000 |       0.000 |      0.000 |
+| Vccadc    |       1.800 |     0.020 |       0.000 |      0.020 |
++-----------+-------------+-----------+-------------+------------+
+
+
+1.3 Confidence Level
+--------------------
+
++-----------------------------+------------+-------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+| User Input Data             | Confidence | Details                                               | Action                                                                                                     |
++-----------------------------+------------+-------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+| Design implementation state | High       | Design is routed                                      |                                                                                                            |
+| Clock nodes activity        | High       | User specified more than 95% of clocks                |                                                                                                            |
+| I/O nodes activity          | Medium     | More than 5% of inputs are missing user specification | Provide missing input activity with simulation results or by editing the "By Resource Type -> I/Os" view   |
+| Internal nodes activity     | Medium     | User specified less than 25% of internal nodes        | Provide missing internal nodes activity with simulation results or by editing the "By Resource Type" views |
+| Device models               | High       | Device models are Production                          |                                                                                                            |
+|                             |            |                                                       |                                                                                                            |
+| Overall confidence level    | Medium     |                                                       |                                                                                                            |
++-----------------------------+------------+-------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+
+
+2. Settings
+-----------
+
+2.1 Environment
+---------------
+
++-----------------------+--------------------------+
+| Ambient Temp (C)      | 25.0                     |
+| ThetaJA (C/W)         | 1.9                      |
+| Airflow (LFM)         | 250                      |
+| Heat Sink             | medium (Medium Profile)  |
+| ThetaSA (C/W)         | 3.4                      |
+| Board Selection       | medium (10"x10")         |
+| # of Board Layers     | 12to15 (12 to 15 Layers) |
+| Board Temperature (C) | 25.0                     |
++-----------------------+--------------------------+
+
+
+2.2 Clock Constraints
+---------------------
+
++--------------------------------------------------------------------------------------------+----------------------------------------------------------------------+-----------------+
+| Clock                                                                                      | Domain                                                               | Constraint (ns) |
++--------------------------------------------------------------------------------------------+----------------------------------------------------------------------+-----------------+
+| clk                                                                                        | clk                                                                  |            10.0 |
+| clk_out1_clk_wiz_0                                                                         | clock_pll/inst/clk_out1_clk_wiz_0                                    |            25.0 |
+| clkfbout_clk_wiz_0                                                                         | clock_pll/inst/clkfbout_clk_wiz_0                                    |            50.0 |
+| dbg_hub/inst/BSCANID.u_xsdbm_id/SWITCH_N_EXT_BSCAN.bscan_inst/SERIES7_BSCAN.bscan_inst/TCK | dbg_hub/inst/BSCANID.u_xsdbm_id/SWITCH_N_EXT_BSCAN.bscan_inst/tck_bs |            33.0 |
++--------------------------------------------------------------------------------------------+----------------------------------------------------------------------+-----------------+
+
+
+3. Detailed Reports
+-------------------
+
+3.1 By Hierarchy
+----------------
+
++------------------------------------------------------------------------------------+-----------+
+| Name                                                                               | Power (W) |
++------------------------------------------------------------------------------------+-----------+
+| DDS_tl                                                                             |     0.108 |
+|   clock_pll                                                                        |     0.099 |
+|     inst                                                                           |     0.099 |
+|   codec                                                                            |    <0.001 |
+|   dbg_hub                                                                          |     0.002 |
+|     inst                                                                           |     0.002 |
+|       BSCANID.u_xsdbm_id                                                           |     0.002 |
+|         CORE_XSDB.UUT_MASTER                                                       |     0.001 |
+|           U_ICON_INTERFACE                                                         |     0.001 |
+|             U_CMD1                                                                 |    <0.001 |
+|             U_CMD2                                                                 |    <0.001 |
+|             U_CMD3                                                                 |    <0.001 |
+|             U_CMD4                                                                 |    <0.001 |
+|             U_CMD5                                                                 |    <0.001 |
+|             U_CMD6_RD                                                              |    <0.001 |
+|               U_RD_FIFO                                                            |    <0.001 |
+|                 SUBCORE_FIFO.xsdbm_v3_0_0_rdfifo_inst                              |    <0.001 |
+|                   inst_fifo_gen                                                    |    <0.001 |
+|                     gconvfifo.rf                                                   |    <0.001 |
+|                       grf.rf                                                       |    <0.001 |
+|                         gntv_or_sync_fifo.gcx.clkx                                 |    <0.001 |
+|                           gnxpm_cdc.gsync_stage[1].rd_stg_inst                     |    <0.001 |
+|                           gnxpm_cdc.gsync_stage[1].wr_stg_inst                     |    <0.001 |
+|                           gnxpm_cdc.gsync_stage[2].rd_stg_inst                     |    <0.001 |
+|                           gnxpm_cdc.gsync_stage[2].wr_stg_inst                     |    <0.001 |
+|                         gntv_or_sync_fifo.gl0.rd                                   |    <0.001 |
+|                           gr1.gr1_int.rfwft                                        |    <0.001 |
+|                           gras.rsts                                                |    <0.001 |
+|                           rpntr                                                    |    <0.001 |
+|                         gntv_or_sync_fifo.gl0.wr                                   |    <0.001 |
+|                           gwas.wsts                                                |    <0.001 |
+|                           wpntr                                                    |    <0.001 |
+|                         gntv_or_sync_fifo.mem                                      |    <0.001 |
+|                           gdm.dm_gen.dm                                            |    <0.001 |
+|                             RAM_reg_0_15_0_5                                       |    <0.001 |
+|                             RAM_reg_0_15_12_15                                     |    <0.001 |
+|                             RAM_reg_0_15_6_11                                      |    <0.001 |
+|                         rstblk                                                     |    <0.001 |
+|                           ngwrdrst.grst.g7serrst.gwrrd_rst_sync_stage[1].rrst_inst |    <0.001 |
+|                           ngwrdrst.grst.g7serrst.gwrrd_rst_sync_stage[1].wrst_inst |    <0.001 |
+|                           ngwrdrst.grst.g7serrst.gwrrd_rst_sync_stage[2].rrst_inst |    <0.001 |
+|                           ngwrdrst.grst.g7serrst.gwrrd_rst_sync_stage[2].wrst_inst |    <0.001 |
+|             U_CMD6_WR                                                              |    <0.001 |
+|               U_WR_FIFO                                                            |    <0.001 |
+|                 SUBCORE_FIFO.xsdbm_v3_0_0_wrfifo_inst                              |    <0.001 |
+|                   inst_fifo_gen                                                    |    <0.001 |
+|                     gconvfifo.rf                                                   |    <0.001 |
+|                       grf.rf                                                       |    <0.001 |
+|                         gntv_or_sync_fifo.gcx.clkx                                 |    <0.001 |
+|                           gnxpm_cdc.gsync_stage[1].rd_stg_inst                     |    <0.001 |
+|                           gnxpm_cdc.gsync_stage[1].wr_stg_inst                     |    <0.001 |
+|                           gnxpm_cdc.gsync_stage[2].rd_stg_inst                     |    <0.001 |
+|                           gnxpm_cdc.gsync_stage[2].wr_stg_inst                     |    <0.001 |
+|                         gntv_or_sync_fifo.gl0.rd                                   |    <0.001 |
+|                           gras.rsts                                                |    <0.001 |
+|                           rpntr                                                    |    <0.001 |
+|                         gntv_or_sync_fifo.gl0.wr                                   |    <0.001 |
+|                           gwas.wsts                                                |    <0.001 |
+|                           wpntr                                                    |    <0.001 |
+|                         gntv_or_sync_fifo.mem                                      |    <0.001 |
+|                           gdm.dm_gen.dm                                            |    <0.001 |
+|                             RAM_reg_0_15_0_5                                       |    <0.001 |
+|                             RAM_reg_0_15_12_15                                     |    <0.001 |
+|                             RAM_reg_0_15_6_11                                      |    <0.001 |
+|                         rstblk                                                     |    <0.001 |
+|                           ngwrdrst.grst.g7serrst.gwrrd_rst_sync_stage[1].rrst_inst |    <0.001 |
+|                           ngwrdrst.grst.g7serrst.gwrrd_rst_sync_stage[1].wrst_inst |    <0.001 |
+|                           ngwrdrst.grst.g7serrst.gwrrd_rst_sync_stage[2].rrst_inst |    <0.001 |
+|                           ngwrdrst.grst.g7serrst.gwrrd_rst_sync_stage[2].wrst_inst |    <0.001 |
+|             U_CMD7_CTL                                                             |    <0.001 |
+|             U_CMD7_STAT                                                            |    <0.001 |
+|             U_STATIC_STATUS                                                        |    <0.001 |
+|           U_XSDB_ADDRESS_CONTROLLER                                                |    <0.001 |
+|           U_XSDB_BURST_WD_LEN_CONTROLLER                                           |    <0.001 |
+|           U_XSDB_BUS_CONTROLLER                                                    |    <0.001 |
+|             U_RD_ABORT_FLAG                                                        |    <0.001 |
+|             U_RD_REQ_FLAG                                                          |    <0.001 |
+|             U_TIMER                                                                |    <0.001 |
+|           U_XSDB_BUS_MSTR2SL_PORT_IFACE                                            |    <0.001 |
+|         CORE_XSDB.U_ICON                                                           |    <0.001 |
+|           U_CMD                                                                    |    <0.001 |
+|           U_STAT                                                                   |    <0.001 |
+|           U_SYNC                                                                   |    <0.001 |
+|         SWITCH_N_EXT_BSCAN.bscan_inst                                              |    <0.001 |
+|         SWITCH_N_EXT_BSCAN.bscan_switch                                            |    <0.001 |
+|   dds_int                                                                          |     0.003 |
+|     dither                                                                         |    <0.001 |
+|     singen                                                                         |     0.001 |
+|   vio                                                                              |    <0.001 |
+|     inst                                                                           |    <0.001 |
+|       DECODER_INST                                                                 |    <0.001 |
+|       PROBE_OUT_ALL_INST                                                           |    <0.001 |
+|         G_PROBE_OUT[0].PROBE_OUT0_INST                                             |    <0.001 |
+|         G_PROBE_OUT[1].PROBE_OUT0_INST                                             |    <0.001 |
+|         G_PROBE_OUT[2].PROBE_OUT0_INST                                             |    <0.001 |
+|       PROBE_OUT_WIDTH_INST                                                         |    <0.001 |
+|       U_XSDB_SLAVE                                                                 |    <0.001 |
++------------------------------------------------------------------------------------+-----------+
+
+
