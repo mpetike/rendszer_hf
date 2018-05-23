@@ -10,6 +10,7 @@
 \usepackage{fancyhdr}
 \usepackage[none]{hyphenat}
 
+\usepackage[dvipsnames]{xcolor}
 \usepackage[nottoc,notlot,notlof]{tocbibind}
 \usepackage{graphicx}
 \usepackage{caption}
@@ -26,6 +27,7 @@
 
 \usepackage{hyperref}
 
+\usepackage{listings}
  
 \urlstyle{same}
 
@@ -70,57 +72,40 @@ Méréstechnika és Információs Rendszerek Tanszék\\
 \setcounter{secnumdepth}{4}
 \setlength{\parindent}{2em}
 %\setlength{\parskip}{1em}
+\section{Feladat}
 
-\section{}
+\section{Tervezés}
 
+\section{Megvalósítás}
+\subsection{DDS}
 
-\section{}
+\subsection{Dithering}
 
-\subsection{}
+\subsection{Toplevel}
 
-\subsection{}
+\section{Forráskód}
 
-\subsection{}
+\subsection{DDS}
 
-\subsubsection{}
+\lstinputlisting[
+language=Verilog,
+inputencoding=latin1,
+basicstyle=\fontsize{7}{13}\selectfont\ttfamily,
+keywordstyle=\color{blue}\ttfamily,
+commentstyle=\color{OliveGreen}\ttfamily,
+backgroundcolor = \color{lightgray}
+]{../DDS/DDS.srcs/sources_1/new/DDS_top.v}
 
-\subsubsection{}
+\subsection{DDS toplevel}
 
-
-\section{}
-
-\subsection{}
-
-\subsection{}
-
-
-\section{}
-
-\subsection{}
-
-\subsection{}
-
-
-\section{}
-
-\subsection{}
-
-\subsection{}
-
-\subsubsection{}
-
-\subsubsection{}
-
-\subsection{}
-
-\subsubsection{}
-
-\subsection{}
-
-\subsubsection{}
-
-
-\section{}
+\lstinputlisting[
+language=Verilog,
+inputencoding=latin1,
+basicstyle=\fontsize{7}{13}\selectfont\ttfamily,
+keywordstyle=\color{blue}\ttfamily,
+commentstyle=\color{OliveGreen}\ttfamily,
+backgroundcolor = \color{lightgray}
+]{../DDS/DDS.srcs/sources_1/new/DDS_tl.v}
 
 
 \pagebreak

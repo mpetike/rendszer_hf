@@ -4,7 +4,7 @@
 <!-- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.        -->
 
 <hwsession version="1" minor="2">
-  <device name="xc7k70t_0" gui_info=""/>
+  <device name="xc7k70t_0" gui_info="dashboard1=hw_vios[xc7k70t_0/hw_vio_1=VIO_PROBES_1;]"/>
   <ObjectList object_type="hw_device" gui_info="">
     <Object name="xc7k70t_0" gui_info="">
       <Properties Property="FULL_PROBES.FILE" value="$_project_name_.runs/impl_1/$_project_name__tl.ltx"/>
@@ -25,7 +25,7 @@
         <Option Id="HW_VIO" value="hw_vio_1"/>
         <Option Id="NAME.CUSTOM" value=""/>
         <Option Id="NAME.SELECT" value="Long"/>
-        <Option Id="OUTPUT_VALUE" value="42"/>
+        <Option Id="OUTPUT_VALUE" value="200"/>
         <Option Id="OUTPUT_VALUE_RADIX" value="UNSIGNED"/>
         <Option Id="SOURCE" value="netlist"/>
       </probeOptions>
@@ -92,7 +92,7 @@
         <Option Id="HW_VIO" value="hw_vio_1"/>
         <Option Id="NAME.CUSTOM" value=""/>
         <Option Id="NAME.SELECT" value="Long"/>
-        <Option Id="OUTPUT_VALUE" value="1"/>
+        <Option Id="OUTPUT_VALUE" value="2"/>
         <Option Id="OUTPUT_VALUE_RADIX" value="HEX"/>
         <Option Id="SOURCE" value="netlist"/>
       </probeOptions>
