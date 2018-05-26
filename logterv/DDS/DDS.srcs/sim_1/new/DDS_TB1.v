@@ -24,7 +24,7 @@ module DDS_TB1(
     //DEBUG connections
     wire [23:0] NCO_OUT;
     wire [23:0] cntrl_word;
-    assign cntrl_word = 419430;
+    assign cntrl_word = 568243;
     wire signed [23:0] sinusoid;
     wire [23:0] triangle;
     wire [23:0] sqrwave;
@@ -50,7 +50,7 @@ module DDS_TB1(
         sig_select <= 2'd0;
     end
     
-    /*
+    
     //Write sin waveform to file
     integer file,i;
     initial
@@ -63,7 +63,7 @@ module DDS_TB1(
         $fclose(file);
         $finish;
     end
-    */
+    
     
     DDS UUT(    .clk(clk),
                     .rst(rst),
