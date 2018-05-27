@@ -87,8 +87,8 @@ Méréstechnika és Információs Rendszerek Tanszék\\
 \section{Tervezés}
 
 %TODO Bálint
-%Blokkdiagramm a DDS belsejéről 
-%írd le hogy az egész cuccnak mit kell tartalmaznia
+%Blokkdiagramm a DDSről, azt az egyszerű elvit amit az elején mutogattunk
+%írd le hogy az egész cuccnak mit kell tartalmaznia, dds audoi kodekhez csatolva kintex7 kártyán
 
 %Rendszerről csináltam
 \begin{figure}[h!]
@@ -108,6 +108,14 @@ A DDS modul tartalmazza a digitális jelet létrehozó hardvert. Az egész modul
 Az első rész maga a NCO, ez verilogban nem több mint egy 24 bites regiszter amihez minden felfutó élen hozzáadjuk a vezérlő szavat. Az így kapott jel fogja a bemenetet képezni az összes többi alegységre. A számláló reset jellel nullázható.
 
 A következő rész végzi a szinusz hullám generálását. A szinusz jel létrehozására egy LU-otT (LookUp Table) használunk. Ez a LUT tartalmazza a szinusz értékeit, mivel 24 bites a kimenet, így 24 bites előjeles formában. A LUT 1024 elemből áll, tehát 10 bites a címbemenete, és mivel minden extra bit felbontás 6 dB-t jelent a dinamika tartományban, így csak a szinusz egy negyede van eltárolva. Ahhoz hogy ebből az egy negyedből egy teljes szinuszt kapjunk, mind a LUT ki és bemenetét manipulálnunk kell, attól függően hogy a szinusznak éppen melyik negyedében vagyunk. Az NCO kimenetéhez egy dither jel van hozzáadva, hogy a kvantálási hibából adódó spektrumhibát korrigáljuk. A dither 12 bites, ugyanis úgy a legoptimálisabb, ha mérete megegyezik a kvantáláskor levágott bitek számával.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.36]{DDS_block.jpg}	
+	\end{center}
+	\caption{DDS elvi működésének blokkdiagramja}
+	\label{a:DDSinternal}
+\end{figure}
 
 A negyed meghatározására az NCO+dither kimenetének felső két bitjét használjuk. Ezekkel határozzuk meg hogy éppen milyen műveleteket kell végrehajtani a LUT címbemenetére adott adattal, illetve a kimeneti jellel. A LUT címbemenete a NCO+dither jel [21:12] tartománya. Első negyedbe nem végzünk semmilyen műveletet a LUT címbemenetére adott jellel, kimenetét se manipuláljuk. Második negyedben a kimenetet ugyan nem manipuláljuk, de a címbemenet értékét nullából kivonva adjuk a LUT bemenetére, ezzel fordított sorrendben kapjuk meg a jeleket a kimeneten. Harmadik és negyedik negyedben a kimeneten is műveletet kell végezni. Ahhoz hogy a szinusznak a negatív felét megkapjuk a LUT kimeneti értékét nullából vonjuk ki. Mivel a LUT egy órajeles késéssel ad jelet a kimenetén, a kimenettel végzett műveletet meghatározó jelet egy órajellel késleltetni kell egy flip-flop segítségével.
 
@@ -143,12 +151,22 @@ Mivel az audio codec kimenete egy állítható erősítőre van kötve, így a p
 
 \section{Erőforrásigény}
 
+A felhasznált erőforrások implementáció után a Kintex-7 kártyán:
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=1]{util.JPG}	
+	\end{center}
+	\caption{Erőforrás használat}
+	\label{a:usagestat}
+\end{figure}
+
 \section{Szimuláció}
 
-%TODO Bálint, ide rakd a matlabos spektrum analízist
+%TODO Bálint
 % számold ki lécci hogy 40MHz-val meghajtva az egészet, mekkora freki tartományt fedünk le, mekkora lépésekkl, stb.
 
-%Ide majd a szimulációról írok
+A szimuláció során 100MHz-vel lett meghajtva a DDS modul, a kapott eredmények a \ref{a:simulation}. ábrán láthatóak.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -158,10 +176,15 @@ Mivel az audio codec kimenete egy állítható erősítőre van kötve, így a p
 	\label{a:simulation}
 \end{figure}
 
+Látható hogy az NCO által létrehozott fűrészjel periódusával megegyezik az összes jel. A háromszög és négyszögjel semmi különöset nem tartalmaz, viszont a szinusz jel érdekes, ugyanis a dither hozzáadásával azt reméljük hogy javul a jel spektruma. Ennek a tesztelésére két szimulációt futtatunk, 
+
+%TODO Bálint ide legyen a matlabos cucc, magyarázattal hogy mit csináltál(röviden) és hogy mit látunk
 
 \section{Éles teszt}
 
-\begin{figure}[h!]
+Az eszköz élesben is ki lett próbálva. Ehhez egy USB-s oszcilloszkópot használtunk. A Kintex-7 panel audio kimenetét vizsgáltuk. A kapott jelalakok alább láthatóak. A beállított frekvencia 2kHz volt.
+
+\begin{figure}[H]
 	\begin{center}
 		\includegraphics[scale=0.25]{scope_sin.png}	
 	\end{center}
@@ -169,7 +192,7 @@ Mivel az audio codec kimenete egy állítható erősítőre van kötve, így a p
 	\label{a:sinout}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
 		\includegraphics[scale=0.25]{scope_tri.png}	
 	\end{center}
@@ -177,13 +200,15 @@ Mivel az audio codec kimenete egy állítható erősítőre van kötve, így a p
 	\label{a:triout}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
 		\includegraphics[scale=0.25]{scope_sqr.png}	
 	\end{center}
 	\caption{Négyszögjel kimenet}
 	\label{a:sqrout}
 \end{figure}
+
+A szinusz és háromszögjel viszonylag szabályos, viszont a \ref{a:sqrout}. ábrán látható négyszögjelnek erős lengései vannak. Ez abból következik hogy a DAC nem ilyen célokra lett kitalálva, csak hangjeleket kell előállítania ami többnyire szinuszjel, éppen ezért egy beépített szűrő található a codec-ben ami láthatóan kiszűri a magasfrekvenciás komponenseket a jelből. A négyszögjel kimenet olyan 4kHz felett szinte használhatatlan már. 
 
 \section{Forráskód}
 

@@ -3,7 +3,7 @@
 <!--The data in this file is primarily intended for consumption by Xilinx tools.
 The structure and the elements are likely to change over the next few releases.
 This means code written to parse this file will need to be revisited each subsequent release.-->
-<application name="pa" timeStamp="Sat May 26 20:09:31 2018">
+<application name="pa" timeStamp="Sun May 27 11:03:03 2018">
 <section name="Project Information" visible="false">
 <property name="ProjectID" value="ab8fa045b8c24d64bad8b72ec153340c" type="ProjectID"/>
 <property name="ProjectIteration" value="7" type="ProjectIteration"/>
@@ -114,11 +114,13 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="ProjectNameChooser_CHOOSE_PROJECT_LOCATION" value="1" type="GuiResourceData"/>
 <property name="ProjectNameChooser_PROJECT_NAME" value="1" type="GuiResourceData"/>
 <property name="ProjectSettingsSimulationPanel_TABBED_PANE" value="4" type="GuiResourceData"/>
+<property name="ProjectSummaryTimingPanel_PROJECT_SUMMARY_TIMING_PANEL_TABBED" value="2" type="GuiResourceData"/>
 <property name="ProjectSummaryUtilizationGadget_PROJECT_SUMMARY_UTILIZATION_GADGET_TABBED" value="4" type="GuiResourceData"/>
-<property name="ProjectSummaryUtilizationPanel_PROJECT_SUMMARY_UTILIZATION_PANEL_TABBED" value="5" type="GuiResourceData"/>
+<property name="ProjectSummaryUtilizationPanel_PROJECT_SUMMARY_UTILIZATION_PANEL_TABBED" value="6" type="GuiResourceData"/>
 <property name="ProjectSummaryUtilizationPanel_PROJECT_SUMMARY_UTILIZATION_TABLE" value="11" type="GuiResourceData"/>
 <property name="RDICommands_WAVEFORM_SAVE_CONFIGURATION" value="1" type="GuiResourceData"/>
 <property name="RDIViews_WAVEFORM_VIEWER" value="106" type="GuiResourceData"/>
+<property name="RunGadget_RUN_GADGET_TABBED_PANE" value="2" type="GuiResourceData"/>
 <property name="RunGadget_SHOW_WARNING_AND_ERROR_MESSAGES_IN_MESSAGES" value="1" type="GuiResourceData"/>
 <property name="SaveProjectUtils_SAVE" value="3" type="GuiResourceData"/>
 <property name="SignalTreePanel_SIGNAL_TREE_TABLE" value="43" type="GuiResourceData"/>
@@ -132,7 +134,7 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="SrcChooserTable_SRC_CHOOSER_TABLE" value="1" type="GuiResourceData"/>
 <property name="SrcMenu_IP_HIERARCHY" value="12" type="GuiResourceData"/>
 <property name="StateMonitor_RESET_RUN" value="2" type="GuiResourceData"/>
-<property name="SyntheticaGettingStartedView_RECENT_PROJECTS" value="15" type="GuiResourceData"/>
+<property name="SyntheticaGettingStartedView_RECENT_PROJECTS" value="16" type="GuiResourceData"/>
 <property name="SyntheticaStateMonitor_CANCEL" value="5" type="GuiResourceData"/>
 <property name="TaskBanner_CLOSE" value="46" type="GuiResourceData"/>
 <property name="VioProbesTreeTablePanel_ADD_PROBE" value="2" type="GuiResourceData"/>
@@ -143,9 +145,9 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="WaveformNameTree_WAVEFORM_NAME_TREE" value="294" type="GuiResourceData"/>
 </item>
 <item name="Other">
-<property name="GuiMode" value="152" type="GuiMode"/>
+<property name="GuiMode" value="153" type="GuiMode"/>
 <property name="BatchMode" value="0" type="BatchMode"/>
-<property name="TclMode" value="133" type="TclMode"/>
+<property name="TclMode" value="134" type="TclMode"/>
 </item>
 </section>
 </application>
