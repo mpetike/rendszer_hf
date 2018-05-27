@@ -87,8 +87,8 @@ Méréstechnika és Információs Rendszerek Tanszék\\
 \section{Tervezés}
 
 %TODO Bálint
-%Blokkdiagramm a DDS belsejéről 
-%írd le hogy az egész cuccnak mit kell tartalmaznia
+%Blokkdiagramm a DDSről, azt az egyszerű elvit amit az elején mutogattunk
+%írd le hogy az egész cuccnak mit kell tartalmaznia, dds audoi kodekhez csatolva kintex7 kártyán
 
 %Rendszerről csináltam
 \begin{figure}[h!]
@@ -163,10 +163,10 @@ A felhasznált erőforrások implementáció után a Kintex-7 kártyán:
 
 \section{Szimuláció}
 
-%TODO Bálint, ide rakd a matlabos spektrum analízist
+%TODO Bálint
 % számold ki lécci hogy 40MHz-val meghajtva az egészet, mekkora freki tartományt fedünk le, mekkora lépésekkl, stb.
 
-%Ide majd a szimulációról írok
+A szimuláció során 100MHz-vel lett meghajtva a DDS modul, a kapott eredmények a \ref{a:simulation}. ábrán láthatóak.
 
 \begin{figure}[h!]
 	\begin{center}
@@ -176,10 +176,15 @@ A felhasznált erőforrások implementáció után a Kintex-7 kártyán:
 	\label{a:simulation}
 \end{figure}
 
+Látható hogy az NCO által létrehozott fűrészjel periódusával megegyezik az összes jel. A háromszög és négyszögjel semmi különöset nem tartalmaz, viszont a szinusz jel érdekes, ugyanis a dither hozzáadásával azt reméljük hogy javul a jel spektruma. Ennek a tesztelésére két szimulációt futtatunk, 
+
+%TODO Bálint ide legyen a matlabos cucc, magyarázattal hogy mit csináltál(röviden) és hogy mit látunk
 
 \section{Éles teszt}
 
-\begin{figure}[h!]
+Az eszköz élesben is ki lett próbálva. Ehhez egy USB-s oszcilloszkópot használtunk. A Kintex-7 panel audio kimenetét vizsgáltuk. A kapott jelalakok alább láthatóak. A beállított frekvencia 2kHz volt.
+
+\begin{figure}[H]
 	\begin{center}
 		\includegraphics[scale=0.25]{scope_sin.png}	
 	\end{center}
@@ -187,7 +192,7 @@ A felhasznált erőforrások implementáció után a Kintex-7 kártyán:
 	\label{a:sinout}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
 		\includegraphics[scale=0.25]{scope_tri.png}	
 	\end{center}
@@ -195,13 +200,15 @@ A felhasznált erőforrások implementáció után a Kintex-7 kártyán:
 	\label{a:triout}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[H]
 	\begin{center}
 		\includegraphics[scale=0.25]{scope_sqr.png}	
 	\end{center}
 	\caption{Négyszögjel kimenet}
 	\label{a:sqrout}
 \end{figure}
+
+A szinusz és háromszögjel viszonylag szabályos, viszont a \ref{a:sqrout}. ábrán látható négyszögjelnek erős lengései vannak. Ez abból következik hogy a DAC nem ilyen célokra lett kitalálva, csak hangjeleket kell előállítania ami többnyire szinuszjel, éppen ezért egy beépített szűrő található a codec-ben ami láthatóan kiszűri a magasfrekvenciás komponenseket a jelből. A négyszögjel kimenet olyan 4kHz felett szinte használhatatlan már. 
 
 \section{Forráskód}
 
