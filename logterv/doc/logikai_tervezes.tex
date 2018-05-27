@@ -109,6 +109,14 @@ Az első rész maga a NCO, ez verilogban nem több mint egy 24 bites regiszter a
 
 A következő rész végzi a szinusz hullám generálását. A szinusz jel létrehozására egy LU-otT (LookUp Table) használunk. Ez a LUT tartalmazza a szinusz értékeit, mivel 24 bites a kimenet, így 24 bites előjeles formában. A LUT 1024 elemből áll, tehát 10 bites a címbemenete, és mivel minden extra bit felbontás 6 dB-t jelent a dinamika tartományban, így csak a szinusz egy negyede van eltárolva. Ahhoz hogy ebből az egy negyedből egy teljes szinuszt kapjunk, mind a LUT ki és bemenetét manipulálnunk kell, attól függően hogy a szinusznak éppen melyik negyedében vagyunk. Az NCO kimenetéhez egy dither jel van hozzáadva, hogy a kvantálási hibából adódó spektrumhibát korrigáljuk. A dither 12 bites, ugyanis úgy a legoptimálisabb, ha mérete megegyezik a kvantáláskor levágott bitek számával.
 
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.36]{DDS_block.jpg}	
+	\end{center}
+	\caption{DDS elvi működésének blokkdiagramja}
+	\label{a:DDSinternal}
+\end{figure}
+
 A negyed meghatározására az NCO+dither kimenetének felső két bitjét használjuk. Ezekkel határozzuk meg hogy éppen milyen műveleteket kell végrehajtani a LUT címbemenetére adott adattal, illetve a kimeneti jellel. A LUT címbemenete a NCO+dither jel [21:12] tartománya. Első negyedbe nem végzünk semmilyen műveletet a LUT címbemenetére adott jellel, kimenetét se manipuláljuk. Második negyedben a kimenetet ugyan nem manipuláljuk, de a címbemenet értékét nullából kivonva adjuk a LUT bemenetére, ezzel fordított sorrendben kapjuk meg a jeleket a kimeneten. Harmadik és negyedik negyedben a kimeneten is műveletet kell végezni. Ahhoz hogy a szinusznak a negatív felét megkapjuk a LUT kimeneti értékét nullából vonjuk ki. Mivel a LUT egy órajeles késéssel ad jelet a kimenetén, a kimenettel végzett műveletet meghatározó jelet egy órajellel késleltetni kell egy flip-flop segítségével.
 
 A négyszögjel létrehozása nagyon egyszerű, mindössze az NCO MSB-jét kell venni és ha nulla akkor a kimenet 0x800000, ha egy akkor 0x7FFFFF.
@@ -142,6 +150,16 @@ A toplevel csak a modulokat és összeköttetéseket tartalmazza. A bemeneti 100
 Mivel az audio codec kimenete egy állítható erősítőre van kötve, így a panelon egy gomb és tolókapcsoló rá lett kötve erre az erősítőre, hogy állítható legyen az erősítése.
 
 \section{Erőforrásigény}
+
+A felhasznált erőforrások implementáció után a Kintex-7 kártyán:
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=1]{util.JPG}	
+	\end{center}
+	\caption{Erőforrás használat}
+	\label{a:usagestat}
+\end{figure}
 
 \section{Szimuláció}
 
